@@ -84,7 +84,19 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // // Insert new ilk registry values tests here
+        // // Insert new ilk registry values tests here        
+        //WBTC-C
+        assertEq(reg.pos("WBTC-C"), 44);
+        assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
+        assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
+        assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
+        assertEq(reg.class("WBTC-C"), 1);
+        assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
+        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_B"));
+        // WBTC token name not present
+        //assertEq(reg.name("WBTC-C"), "Wrapped BTC");
+        assertEq(reg.symbol("WBTC-C"), "WBTC");
+        
         //PSM-GUSD
         // assertEq(reg.pos("PSM-GUSD-A"), 45);
         // assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
@@ -96,18 +108,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // // GUSD token name not present on Goerli (DSToken)
         // //assertEq(reg.name("PSM-GUSD-A"), "");
         // assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
-        
-        //WBTC-C
-        assertEq(reg.pos("WBTC-C"), 46);
-        assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
-        assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
-        assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
-        assertEq(reg.class("WBTC-C"), 1);
-        assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
-        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_B"));
-        // WBTC token name not present
-        //assertEq(reg.name("WBTC-C"), "Wrapped BTC");
-        assertEq(reg.symbol("WBTC-C"), "WBTC");
     }
 
     // function testSpellIsCast_PSM_GUSD_A_INTEGRATION() public {

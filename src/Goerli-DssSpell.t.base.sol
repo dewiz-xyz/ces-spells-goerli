@@ -315,7 +315,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             46                       // Num expected in system
+            ilk_count:             45                       // Num expected in system
         });
 
         //
