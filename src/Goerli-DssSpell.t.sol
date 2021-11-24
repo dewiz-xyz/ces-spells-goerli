@@ -71,9 +71,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
         assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
         assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_JOIN_PSM_GUSD_A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_PSM_GUSD_A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_GUSD_A"), addr.addr("MCD_CLIP_CALC_PSM_GUSD_A"));
+        
         assertEq(chainLog.version(), "1.9.11");
     }
 
@@ -83,7 +84,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WBTC-C"), 44);
+        //PSM-GUSD
+        assertEq(reg.pos("PSM-GUSD-A"), 45);
+        assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
+        assertEq(reg.gem("PSM-GUSD-A"), addr.addr("GUSD"));
+        assertEq(reg.dec("PSM-GUSD-A"), DSTokenAbstract(addr.addr("GUSD")).decimals());
+        assertEq(reg.class("PSM-GUSD-A"), 1);
+        assertEq(reg.pip("PSM-GUSD-A"), addr.addr("PIP_GUSD"));
+        assertEq(reg.xlip("PSM-GUSD-A"), addr.addr("MCD_CLIP_PSM-GUSD-A"));
+        // GUSD token name not present on Goerli (DSToken)
+        //assertEq(reg.name("PSM-GUSD-A"), "");
+        assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
+        
+        //WBTC-C
+        assertEq(reg.pos("WBTC-C"), 46);
         assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
         assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
         assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
@@ -91,8 +105,52 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
         assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_B"));
         // WBTC token name not present
-        //assertEq(reg.name("WBTC-B"), "Wrapped BTC");
+        //assertEq(reg.name("WBTC-C"), "Wrapped BTC");
         assertEq(reg.symbol("WBTC-C"), "WBTC");
+    }
+
+    function testSpellIsCast_PSM_GUSD_A_INTEGRATION() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        DSTokenAbstract gusd = DSTokenAbstract(addr.addr("GUSD"));
+        AuthGemJoinAbstract joinPSMGUSDA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A"));
+        DssPsmLike psmPSMGUSDA = DssPsmLike(addr.addr("MCD_PSM_GUSD_A"));
+        ClipAbstract clipPSMGUSDA = ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A"));
+
+        // Add balance to the test address
+        uint256 oneGusd = 10 ** gusd.decimals();
+        uint256 oneDai = 10 ** 18;
+
+        giveTokens(gusd, 1 * THOUSAND * oneGusd);
+
+        assertEq(gusd.balanceOf(address(this)), 1 * THOUSAND * oneGusd);
+        assertEq(dai.balanceOf(address(this)), 0);
+
+        // Authorization
+        assertEq(joinPSMGUSDA.wards(pauseProxy), 1);
+        assertEq(joinPSMGUSDA.wards(address(psmPSMGUSDA)), 1);
+        assertEq(psmPSMGUSDA.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(joinPSMGUSDA)), 1);
+        assertEq(clipPSMGUSDA.wards(address(end)), 1);
+        assertEq(clipPSMGUSDA.wards(address(clipMom)), 0);
+
+        // Check psm set up correctly
+        assertEq(psmPSMGUSD.tin(), 0);
+        assertEq(psmPSMGUSDA.tout(), 0);
+
+        // Convert all GUSD to DAI with a 0% fee
+        gusd.approve(address(joinPSMGUSDA), 1 * THOUSAND * oneGusd);
+        psmPSMGUSDA.sellGem(address(this), 1 * THOUSAND * oneGusd);
+        assertEq(gusd.balanceOf(address(this)), 0);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai );
+
+        // Convert 50 DAI to GUSD with a 0% fee
+        dai.approve(address(psmPSMGUSDA), uint256(-1));
+        psmPSMGUSDA.buyGem(address(this), 50 * oneGusd);
+        assertEq(gusd.balanceOf(address(this)), 50 * oneGusd);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai - 50 * oneDai);
     }
 
     function testFailWrongDay() public {

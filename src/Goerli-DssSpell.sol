@@ -22,10 +22,6 @@ import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 import { VatAbstract, LerpFactoryAbstract, SpotAbstract} from "dss-interfaces/Interfaces.sol";
 
-interface LerpAbstract {
-    function tick() external returns (uint256);
-}
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
@@ -53,7 +49,7 @@ contract DssSpellAction is DssAction {
 
     // --- Math ---
     uint256 constant MILLION                 = 10 ** 6;
-    uint256 constant RAY                     = 10 ** 27;
+
 
     // --- PSM-GUSD-A ---
     address constant MCD_JOIN_PSM_GUSD_A      = 0xA8C2C30A14D3044Bc772948d269614e6cE00BbE0; //GemJoin8
@@ -81,7 +77,8 @@ contract DssSpellAction is DssAction {
         // Increase the Aave D3M Maximum Debt Ceiling to 100 million
         // https://vote.makerdao.com/polling/QmZhvNu5?network=mainnet#poll-detail
         // https://forum.makerdao.com/t/proposal-to-increase-the-d3m-dc-from-50m-to-100m/11737 
-        DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-AAVEV2-DAI", 100 * MILLION); //Not supported on Goerli
+        
+        //DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-AAVEV2-DAI", 100 * MILLION); //Not supported on Goerli
 
         // ----------------------------- Collateral Onboarding ----------------------------
         // Add a GUSD Peg Stability Module
