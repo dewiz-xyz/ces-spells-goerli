@@ -51,14 +51,14 @@ contract DssSpellAction is DssAction {
     uint256 constant MILLION                 = 10 ** 6;
 
     // --- PSM-GUSD-A ---
-    address constant MCD_JOIN_PSM_GUSD_A      = 0xA8C2C30A14D3044Bc772948d269614e6cE00BbE0; //GemJoin8
-    address constant MCD_CLIP_PSM_GUSD_A      = 0xa2c03fc2784B209673852621beceED9958E45b1B; //Need to verify
+    address constant MCD_JOIN_PSM_GUSD_A      = 0x1Bc797AC1883FE1C40Efade333ca5c1De9316D28; // AuthGemJoin8
+    address constant MCD_CLIP_PSM_GUSD_A      = 0xDfe18900fEbf678B02Ca7FA524F375911e4Cf6C9;
     address constant MCD_CLIP_CALC_PSM_GUSD_A = 0xE99bd8c56d7B9d90A36C8a563a4CA375b144dD94; 
     address constant MCD_PSM_GUSD_A           = 0x7Be29f36ECDfFC5e1D42C6549E02784AFB8275Ae;
 
     // --- WBTC-C ---
     address constant MCD_JOIN_WBTC_C        = 0xe15E69F10E1A362F69d9672BFeA20B75CFf8574A;
-    address constant MCD_CLIP_WBTC_C        = 0x5ef4Da0B978EAc3FEDF9EF6510424709E2c4d274; //Need to verify
+    address constant MCD_CLIP_WBTC_C        = 0x98f1196DdF9b4De0C7EadB9883A881eB127afe0f;
     address constant MCD_CLIP_CALC_WBTC_C   = 0xD26B140fdaA11c23b09230c24cBe71f456AC7ab6;    
 
     function _add(uint x, uint y) internal pure returns (uint z) {
@@ -90,41 +90,41 @@ contract DssSpellAction is DssAction {
         address PIP_GUSD = DssExecLib.getChangelogAddress("PIP_GUSD");
 
         //GUSD PSM
-        DssExecLib.authorize(MCD_JOIN_PSM_GUSD_A, MCD_PSM_GUSD_A);
+        // DssExecLib.authorize(MCD_JOIN_PSM_GUSD_A, MCD_PSM_GUSD_A);
 
-        DssExecLib.addNewCollateral(CollateralOpts({
-            ilk:                   "PSM-GUSD-A",
-            gem:                   GUSD,
-            join:                  MCD_JOIN_PSM_GUSD_A,
-            clip:                  MCD_CLIP_PSM_GUSD_A,
-            calc:                  MCD_CLIP_CALC_PSM_GUSD_A,
-            pip:                   PIP_GUSD,
-            isLiquidatable:        false,
-            isOSM:                 false,
-            whitelistOSM:          false,
-            ilkDebtCeiling:        100 * MILLION,
-            minVaultAmount:        0,
-            maxLiquidationAmount:  0,
-            liquidationPenalty:    1300,
-            ilkStabilityFee:       ZERO_PCT_RATE,
-            startingPriceFactor:   10500,
-            breakerTolerance:      9500, // Allows for a 5% hourly price drop before disabling liquidations
-            auctionDuration:       220 minutes,
-            permittedDrop:         9000,
-            liquidationRatio:      10000,
-            kprFlatReward:         300,
-            kprPctReward:          10 // 0.1%
-        }));
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_GUSD_A, 120 seconds, 9990);
-        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 100 * MILLION, 10 * MILLION, 24 hours);
+        // DssExecLib.addNewCollateral(CollateralOpts({
+        //     ilk:                   "PSM-GUSD-A",
+        //     gem:                   GUSD,
+        //     join:                  MCD_JOIN_PSM_GUSD_A,
+        //     clip:                  MCD_CLIP_PSM_GUSD_A,
+        //     calc:                  MCD_CLIP_CALC_PSM_GUSD_A,
+        //     pip:                   PIP_GUSD,
+        //     isLiquidatable:        false,
+        //     isOSM:                 false,
+        //     whitelistOSM:          false,
+        //     ilkDebtCeiling:        100 * MILLION,
+        //     minVaultAmount:        0,
+        //     maxLiquidationAmount:  0,
+        //     liquidationPenalty:    1300,
+        //     ilkStabilityFee:       ZERO_PCT_RATE,
+        //     startingPriceFactor:   10500,
+        //     breakerTolerance:      9500, // Allows for a 5% hourly price drop before disabling liquidations
+        //     auctionDuration:       220 minutes,
+        //     permittedDrop:         9000,
+        //     liquidationRatio:      10000,
+        //     kprFlatReward:         300,
+        //     kprPctReward:          10 // 0.1%
+        // }));
+        // DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_GUSD_A, 120 seconds, 9990);
+        // DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 100 * MILLION, 10 * MILLION, 24 hours);
 
-        DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", 0);
-        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
+        // DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", 0);
+        // DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
-        DssExecLib.setChangelogAddress("MCD_JOIN_PSM_GUSD_A", MCD_JOIN_PSM_GUSD_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_PSM_GUSD_A", MCD_CLIP_PSM_GUSD_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_GUSD_A", MCD_CLIP_CALC_PSM_GUSD_A);
-        DssExecLib.setChangelogAddress("MCD_PSM_GUSD_A", MCD_PSM_GUSD_A);
+        // DssExecLib.setChangelogAddress("MCD_JOIN_PSM_GUSD_A", MCD_JOIN_PSM_GUSD_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_PSM_GUSD_A", MCD_CLIP_PSM_GUSD_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_GUSD_A", MCD_CLIP_CALC_PSM_GUSD_A);
+        // DssExecLib.setChangelogAddress("MCD_PSM_GUSD_A", MCD_PSM_GUSD_A);
  
         //  Add WBTC-C as a new Vault Type
         //  https://vote.makerdao.com/polling/QmdVYMRo?network=mainnet#poll-detail (WBTC-C Onboarding)
