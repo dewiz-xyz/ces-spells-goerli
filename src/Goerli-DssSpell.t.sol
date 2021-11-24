@@ -71,6 +71,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
         assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
         assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_PSM_GUSD_A"), addr.addr("MCD_PSM_GUSD_A"));
         assertEq(chainLog.getAddress("MCD_JOIN_PSM_GUSD_A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
         assertEq(chainLog.getAddress("MCD_CLIP_PSM_GUSD_A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
         assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_GUSD_A"), addr.addr("MCD_CLIP_CALC_PSM_GUSD_A"));
@@ -83,7 +84,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new ilk registry values tests here
+        // // Insert new ilk registry values tests here
         //PSM-GUSD
         assertEq(reg.pos("PSM-GUSD-A"), 45);
         assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
@@ -137,7 +138,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(clipPSMGUSDA.wards(address(clipMom)), 0);
 
         // Check psm set up correctly
-        assertEq(psmPSMGUSD.tin(), 0);
+        assertEq(psmPSMGUSDA.tin(), 0);
         assertEq(psmPSMGUSDA.tout(), 0);
 
         // Convert all GUSD to DAI with a 0% fee
@@ -380,4 +381,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
         assertEq(expectedHash, actualHash);
     }
+}
+
+interface DssPsmLike {
+    function wards(address) external view returns (uint256);
+    function tin() external view returns (uint256);
+    function tout() external view returns (uint256);
+    function sellGem(address, uint256) external;
+    function buyGem(address, uint256) external;
 }
