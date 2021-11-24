@@ -43,12 +43,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "WBTC-B",
-            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_B")),
-            ClipAbstract(addr.addr("MCD_CLIP_WBTC_B")),
+            "WBTC-C",
+            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_C")),
+            ClipAbstract(addr.addr("MCD_CLIP_WBTC_C")),
             addr.addr("PIP_WBTC"),
             true,
             true,
+            false
+        );
+        checkIlkIntegration(
+            "PSM-GUSD-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
+            addr.addr("PIP_GUSD"),
+            false,
+            false,
             false
         );
     }
@@ -59,10 +68,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_B"), addr.addr("MCD_CLIP_WBTC_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_B"), addr.addr("MCD_CLIP_CALC_WBTC_B"));
-        assertEq(chainLog.version(), "1.9.10");
+        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
+        assertEq(chainLog.version(), "1.9.11");
     }
 
     function testNewIlkRegistryValues() public {
@@ -71,42 +83,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WBTC-B"), 43);
-        assertEq(reg.join("WBTC-B"), addr.addr("MCD_JOIN_WBTC_B"));
-        assertEq(reg.gem("WBTC-B"), addr.addr("WBTC"));
-        assertEq(reg.dec("WBTC-B"), DSTokenAbstract(addr.addr("WBTC")).decimals());
-        assertEq(reg.class("WBTC-B"), 1);
-        assertEq(reg.pip("WBTC-B"), addr.addr("PIP_WBTC"));
-        assertEq(reg.xlip("WBTC-B"), addr.addr("MCD_CLIP_WBTC_B"));
+        assertEq(reg.pos("WBTC-C"), 44);
+        assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
+        assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
+        assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
+        assertEq(reg.class("WBTC-C"), 1);
+        assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
+        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_B"));
         // WBTC token name not present
         //assertEq(reg.name("WBTC-B"), "Wrapped BTC");
-        assertEq(reg.symbol("WBTC-B"), "WBTC");
-    }
-
-    function testAAVELerpOffboardings() public {
-        checkIlkLerpOffboarding("AAVE-A", "AAVE-A Offboarding", 165, 2100);
-    }
-    function testBALLerpOffboardings() public {
-        checkIlkLerpOffboarding("BAL-A", "BAL-A Offboarding", 165, 2300);
-    }
-    function testCOMPLerpOffboardings() public {
-        checkIlkLerpOffboarding("COMP-A", "COMP-A Offboarding", 165, 2000);
-    }
-
-    function testLRCIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("LRC-A", "LRC Offboarding", "LRC-A Offboarding", 24300);
-    }
-
-    function testBATIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("BAT-A", "BAT Offboarding", "BAT-A Offboarding", 11200);
-    }
-
-    function testZRXIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("ZRX-A", "ZRX Offboarding", "ZRX-A Offboarding", 5500);
-    }
-
-    function testUNIV2LINKETHIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("UNIV2LINKETH-A", "UNIV2LINKETH Offboarding", "UNIV2LINKETH-A Offboarding", 1600);
+        assertEq(reg.symbol("WBTC-C"), "WBTC");
     }
 
     function testFailWrongDay() public {
@@ -335,14 +321,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             actualHash := keccak256(ptr, size)
         }
         assertEq(expectedHash, actualHash);
-    }
-
-    function testPsmParamChanges() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(PsmAbstract(addr.addr("MCD_PSM_USDC_A")).tin(), 0);
-        assertEq(PsmAbstract(addr.addr("MCD_PSM_PAX_A")).tin(), 0);
     }
 }
