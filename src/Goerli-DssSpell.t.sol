@@ -92,67 +92,67 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
         assertEq(reg.class("WBTC-C"), 1);
         assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
-        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_B"));
+        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_C"));
         // WBTC token name not present
         //assertEq(reg.name("WBTC-C"), "Wrapped BTC");
         assertEq(reg.symbol("WBTC-C"), "WBTC");
         
         //PSM-GUSD
-        // assertEq(reg.pos("PSM-GUSD-A"), 45);
-        // assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
-        // assertEq(reg.gem("PSM-GUSD-A"), addr.addr("GUSD"));
-        // assertEq(reg.dec("PSM-GUSD-A"), DSTokenAbstract(addr.addr("GUSD")).decimals());
-        // assertEq(reg.class("PSM-GUSD-A"), 1);
-        // assertEq(reg.pip("PSM-GUSD-A"), addr.addr("PIP_GUSD"));
-        // assertEq(reg.xlip("PSM-GUSD-A"), addr.addr("MCD_CLIP_PSM-GUSD-A"));
-        // // GUSD token name not present on Goerli (DSToken)
-        // //assertEq(reg.name("PSM-GUSD-A"), "");
-        // assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
+        assertEq(reg.pos("PSM-GUSD-A"), 45);
+        assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
+        assertEq(reg.gem("PSM-GUSD-A"), addr.addr("GUSD"));
+        assertEq(reg.dec("PSM-GUSD-A"), DSTokenAbstract(addr.addr("GUSD")).decimals());
+        assertEq(reg.class("PSM-GUSD-A"), 1);
+        assertEq(reg.pip("PSM-GUSD-A"), addr.addr("PIP_GUSD"));
+        assertEq(reg.xlip("PSM-GUSD-A"), addr.addr("MCD_CLIP_PSM-GUSD-A"));
+        // GUSD token name not present on Goerli (DSToken)
+        //assertEq(reg.name("PSM-GUSD-A"), "");
+        assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
     }
 
-    // function testSpellIsCast_PSM_GUSD_A_INTEGRATION() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function testSpellIsCast_PSM_GUSD_A_INTEGRATION() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-    //     DSTokenAbstract gusd = DSTokenAbstract(addr.addr("GUSD"));
-    //     AuthGemJoinAbstract joinPSMGUSDA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A"));
-    //     DssPsmLike psmPSMGUSDA = DssPsmLike(addr.addr("MCD_PSM_GUSD_A"));
-    //     ClipAbstract clipPSMGUSDA = ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A"));
+        DSTokenAbstract gusd = DSTokenAbstract(addr.addr("GUSD"));
+        AuthGemJoinAbstract joinPSMGUSDA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A"));
+        DssPsmLike psmPSMGUSDA = DssPsmLike(addr.addr("MCD_PSM_GUSD_A"));
+        ClipAbstract clipPSMGUSDA = ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A"));
 
-    //     // Add balance to the test address
-    //     uint256 oneGusd = 10 ** gusd.decimals();
-    //     uint256 oneDai = 10 ** 18;
+        // Add balance to the test address
+        uint256 oneGusd = 10 ** gusd.decimals();
+        uint256 oneDai = 10 ** 18;
 
-    //     giveTokens(gusd, 1 * THOUSAND * oneGusd);
+        giveTokens(gusd, 1 * THOUSAND * oneGusd);
 
-    //     assertEq(gusd.balanceOf(address(this)), 1 * THOUSAND * oneGusd);
-    //     assertEq(dai.balanceOf(address(this)), 0);
+        assertEq(gusd.balanceOf(address(this)), 1 * THOUSAND * oneGusd);
+        assertEq(dai.balanceOf(address(this)), 0);
 
-    //     // Authorization
-    //     assertEq(joinPSMGUSDA.wards(pauseProxy), 1);
-    //     assertEq(joinPSMGUSDA.wards(address(psmPSMGUSDA)), 1);
-    //     assertEq(psmPSMGUSDA.wards(pauseProxy), 1);
-    //     assertEq(vat.wards(address(joinPSMGUSDA)), 1);
-    //     assertEq(clipPSMGUSDA.wards(address(end)), 1);
-    //     assertEq(clipPSMGUSDA.wards(address(clipMom)), 0);
+        // Authorization
+        assertEq(joinPSMGUSDA.wards(pauseProxy), 1);
+        assertEq(joinPSMGUSDA.wards(address(psmPSMGUSDA)), 1);
+        assertEq(psmPSMGUSDA.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(joinPSMGUSDA)), 1);
+        assertEq(clipPSMGUSDA.wards(address(end)), 1);
+        assertEq(clipPSMGUSDA.wards(address(clipMom)), 0);
 
-    //     // Check psm set up correctly
-    //     assertEq(psmPSMGUSDA.tin(), 0);
-    //     assertEq(psmPSMGUSDA.tout(), 0);
+        // Check psm set up correctly
+        assertEq(psmPSMGUSDA.tin(), 0);
+        assertEq(psmPSMGUSDA.tout(), 0);
 
-    //     // Convert all GUSD to DAI with a 0% fee
-    //     gusd.approve(address(joinPSMGUSDA), 1 * THOUSAND * oneGusd);
-    //     psmPSMGUSDA.sellGem(address(this), 1 * THOUSAND * oneGusd);
-    //     assertEq(gusd.balanceOf(address(this)), 0);
-    //     assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai );
+        // Convert all GUSD to DAI with a 0% fee
+        gusd.approve(address(joinPSMGUSDA), 1 * THOUSAND * oneGusd);
+        psmPSMGUSDA.sellGem(address(this), 1 * THOUSAND * oneGusd);
+        assertEq(gusd.balanceOf(address(this)), 0);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai );
 
-    //     // Convert 50 DAI to GUSD with a 0% fee
-    //     dai.approve(address(psmPSMGUSDA), uint256(-1));
-    //     psmPSMGUSDA.buyGem(address(this), 50 * oneGusd);
-    //     assertEq(gusd.balanceOf(address(this)), 50 * oneGusd);
-    //     assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai - 50 * oneDai);
-    // }
+        // Convert 50 DAI to GUSD with a 0% fee
+        dai.approve(address(psmPSMGUSDA), uint256(-1));
+        psmPSMGUSDA.buyGem(address(this), 50 * oneGusd);
+        assertEq(gusd.balanceOf(address(this)), 50 * oneGusd);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai - 50 * oneDai);
+    }
 
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);

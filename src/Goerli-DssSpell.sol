@@ -131,41 +131,41 @@ contract DssSpellAction is DssAction {
         address PIP_GUSD = DssExecLib.getChangelogAddress("PIP_GUSD");
 
         //GUSD PSM
-        // DssExecLib.authorize(MCD_JOIN_PSM_GUSD_A, MCD_PSM_GUSD_A);
+        DssExecLib.authorize(MCD_JOIN_PSM_GUSD_A, MCD_PSM_GUSD_A);
 
-        // DssExecLib.addNewCollateral(CollateralOpts({
-        //     ilk:                   "PSM-GUSD-A",
-        //     gem:                   GUSD,
-        //     join:                  MCD_JOIN_PSM_GUSD_A,
-        //     clip:                  MCD_CLIP_PSM_GUSD_A,
-        //     calc:                  MCD_CLIP_CALC_PSM_GUSD_A,
-        //     pip:                   PIP_GUSD,
-        //     isLiquidatable:        false,
-        //     isOSM:                 false,
-        //     whitelistOSM:          false,
-        //     ilkDebtCeiling:        100 * MILLION,
-        //     minVaultAmount:        0,
-        //     maxLiquidationAmount:  0,
-        //     liquidationPenalty:    1300,
-        //     ilkStabilityFee:       ZERO_PCT_RATE,
-        //     startingPriceFactor:   10500,
-        //     breakerTolerance:      9500, // Allows for a 5% hourly price drop before disabling liquidations
-        //     auctionDuration:       220 minutes,
-        //     permittedDrop:         9000,
-        //     liquidationRatio:      10000,
-        //     kprFlatReward:         300,
-        //     kprPctReward:          10 // 0.1%
-        // }));
-        // DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_GUSD_A, 120 seconds, 9990);
-        // DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 100 * MILLION, 10 * MILLION, 24 hours);
+        DssExecLib.addNewCollateral(CollateralOpts({
+            ilk:                   "PSM-GUSD-A",
+            gem:                   GUSD,
+            join:                  MCD_JOIN_PSM_GUSD_A,
+            clip:                  MCD_CLIP_PSM_GUSD_A,
+            calc:                  MCD_CLIP_CALC_PSM_GUSD_A,
+            pip:                   PIP_GUSD,
+            isLiquidatable:        false,
+            isOSM:                 false,
+            whitelistOSM:          false,
+            ilkDebtCeiling:        100 * MILLION,
+            minVaultAmount:        0,
+            maxLiquidationAmount:  0,
+            liquidationPenalty:    1300,
+            ilkStabilityFee:       ZERO_PCT_RATE,
+            startingPriceFactor:   10500,
+            breakerTolerance:      9500, // Allows for a 5% hourly price drop before disabling liquidations
+            auctionDuration:       220 minutes,
+            permittedDrop:         9000,
+            liquidationRatio:      10000,
+            kprFlatReward:         300,
+            kprPctReward:          10 // 0.1%
+        }));
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_GUSD_A, 120 seconds, 9990);
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 100 * MILLION, 10 * MILLION, 24 hours);
 
-        // DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", 0);
-        // DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", 0);
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
-        // DssExecLib.setChangelogAddress("MCD_JOIN_PSM_GUSD_A", MCD_JOIN_PSM_GUSD_A);
-        // DssExecLib.setChangelogAddress("MCD_CLIP_PSM_GUSD_A", MCD_CLIP_PSM_GUSD_A);
-        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_GUSD_A", MCD_CLIP_CALC_PSM_GUSD_A);
-        // DssExecLib.setChangelogAddress("MCD_PSM_GUSD_A", MCD_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_JOIN_PSM_GUSD_A", MCD_JOIN_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_PSM_GUSD_A", MCD_CLIP_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_GUSD_A", MCD_CLIP_CALC_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_PSM_GUSD_A", MCD_PSM_GUSD_A);
 
         DssExecLib.setChangelogVersion("1.9.11");
     }

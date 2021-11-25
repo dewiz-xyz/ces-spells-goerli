@@ -315,7 +315,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             45                       // Num expected in system
+            ilk_count:             46                       // Num expected in system
         });
 
         //
@@ -2164,7 +2164,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ) public {
         DSTokenAbstract token = DSTokenAbstract(join.gem());
 
-        if (_isOSM) OsmAbstract(pip).poke();
+        //if (_isOSM) OsmAbstract(pip).poke();
         hevm.warp(block.timestamp + 3601);
         if (_isOSM) OsmAbstract(pip).poke();
         spotter.poke(_ilk);
