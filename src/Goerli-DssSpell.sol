@@ -143,7 +143,7 @@ contract DssSpellAction is DssAction {
             isLiquidatable:        false,
             isOSM:                 false,
             whitelistOSM:          false,
-            ilkDebtCeiling:        100 * MILLION,
+            ilkDebtCeiling:        10 * MILLION,
             minVaultAmount:        0,
             maxLiquidationAmount:  0,
             liquidationPenalty:    1300,
@@ -157,7 +157,7 @@ contract DssSpellAction is DssAction {
             kprPctReward:          10 // 0.1%
         }));
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_GUSD_A, 120 seconds, 9990);
-        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 100 * MILLION, 10 * MILLION, 24 hours);
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 10 * MILLION, 10 * MILLION, 24 hours);
 
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", 0);
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);

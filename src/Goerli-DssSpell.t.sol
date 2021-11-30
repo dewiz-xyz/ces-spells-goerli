@@ -51,15 +51,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             true,
             false
         );
-        // checkIlkIntegration(
-        //     "PSM-GUSD-A",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
-        //     addr.addr("PIP_GUSD"),
-        //     false,
-        //     false,
-        //     false
-        // );
+        checkIlkIntegration(
+            "PSM-GUSD-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
+            addr.addr("PIP_GUSD"),
+            false,
+            false,
+            false
+        );
     }
 
     function testNewChainlogValues() public {
