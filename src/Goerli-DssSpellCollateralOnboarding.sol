@@ -66,7 +66,7 @@ contract DssSpellCollateralOnboardingAction {
                 pip:                  PIP_DUMMY,
                 isLiquidatable:       false,
                 isOSM:                false,
-                whitelistOSM:         false,
+                whitelistOSM:         true,
                 ilkDebtCeiling:       1000 * BILLION,
                 minVaultAmount:       1000,
                 maxLiquidationAmount: 0,
@@ -82,12 +82,7 @@ contract DssSpellCollateralOnboardingAction {
             })
         );
 
-        // DssExecLib.setStairstepExponentialDecrease(
-        //     CALC_ADDR,
-        //     DURATION,
-        //     PCT_BPS
-        // );
-
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_DUMMY_A, 90 seconds, 9900);
         DssExecLib.setIlkAutoLineParameters('DUMMY-A', 100 * MILLION, 50 * MILLION, 1 hours);
 
         // ChainLog Updates
@@ -97,7 +92,7 @@ contract DssSpellCollateralOnboardingAction {
         ChainlogAbstract(CHAINLOG).setAddress("PIP_DUMMY", PIP_DUMMY);
         ChainlogAbstract(CHAINLOG).setAddress("MCD_JOIN_DUMMY_A", MCD_JOIN_DUMMY_A);
         ChainlogAbstract(CHAINLOG).setAddress("MCD_CLIP_DUMMY_A", MCD_CLIP_DUMMY_A);
-        // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
+        ChainlogAbstract(CHAINLOG).setAddress("MCD_CLIP_CALC_DUMMY_A", MCD_CLIP_CALC_DUMMY_A);
         // ChainlogAbstract(CHAINLOG).setVersion("0.2.0");
     }
 }
