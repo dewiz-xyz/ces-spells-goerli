@@ -1,2 +1,8 @@
 /out
+<<<<<<< HEAD
 /cache
+||||||| d78dcb2
+=======
+/cache
+*.log
+>>>>>>> upstream/master

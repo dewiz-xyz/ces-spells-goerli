@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import os, sys, subprocess, time, re, json, requests
+from datetime import datetime
 
 api_key = ''
 try:
@@ -179,7 +180,7 @@ def get_stubs(block):
     return '\n'.join(lines)
 
 for signature, block in libraries.items():
-    external_code = code.replace(block, '')
+    external_code = remove_comments(code.replace(block, ''))
     library_name = re.sub('library ', '', signature).strip()
     no_comments = remove_comments(block)
     selected_pre = no_comments
@@ -191,7 +192,7 @@ for signature, block in libraries.items():
     new_block = get_warning(library_name) + stubs
     code = code.replace(block, new_block)
 
-if 'addNewCollateral' not in code:
+if 'addNewCollateral' not in remove_comments(code):
     code = code.replace(
         'pragma experimental ABIEncoderV2;',
         '// pragma experimental ABIEncoderV2;'
@@ -199,19 +200,8 @@ if 'addNewCollateral' not in code:
 
 def get_library_info():
     try:
-        makefile = open('./Makefile').read()
-        libraries_flags = re.findall('DAPP_LIBRARIES=\'(.*)\'', makefile)
-        if len(libraries_flags) == 0:
-            raise ValueError('No library flags found in Makefile')
-        libraries_flag = libraries_flags[0].strip().split(' ')
-        if len(libraries_flag) > 1:
-            exit('Only one library supported.')
-        library_flag = libraries_flag[0]
-        library_components = library_flag.split(':')
-        if len(library_components) != 3:
-            raise ValueError('Malformed library flag: ', library_components)
-        library_name = library_components[1]
-        library_address = library_components[2]
+        library_name = "DssExecLib"
+        library_address = open('./DssExecLib.address').read()
         return library_name, library_address
     except FileNotFoundError:
         raise ValueError('No Makefile found')
@@ -310,6 +300,11 @@ while check_response == {} or 'pending' in check_response['result'].lower():
 
 if check_response['status'] != '1' or check_response['message'] != 'OK':
     print('Error: ' + check_response['result'])
+    log_name = 'verify-{}.log'.format(datetime.now().timestamp())
+    log = open(log_name, 'w')
+    log.write(code)
+    log.close()
+    print('log written to {}'.format(log_name))
     exit()
 
 print('Contract verified at https://{0}{1}etherscan.io/address/{2}#code'.format(

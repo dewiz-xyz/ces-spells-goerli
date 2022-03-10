@@ -1,16 +1,36 @@
 #!/usr/bin/env bash
 set -e
 
-[[ "$ETH_RPC_URL" && "$(seth chain)" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
+[[ "$(seth chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
 
-export DAPP_BUILD_OPTIMIZE=1
-export DAPP_BUILD_OPTIMIZE_RUNS=1
-# DssExecLib 0.0.8
-export DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0x4aad139a88d2dd5e7410b408593208523a3a891d'
+for ARGUMENT in "$@"
+do
+    KEY=$(echo $ARGUMENT | cut -f1 -d=)
+    VALUE=$(echo $ARGUMENT | cut -f2 -d=)
+
+    case "$KEY" in
+            match)      MATCH="$VALUE" ;;
+            optimizer)  OPTIMIZER="$VALUE" ;;
+            *)
+    esac
+done
+
+if [[ -z "$OPTIMIZER" ]]; then
+  # Default to running with optimize=1
+  OPTIMIZER=1
+fi
+
+# 2022-01-28 Disabled optimizer on due to engineering costs
+# export DAPP_BUILD_OPTIMIZE="$OPTIMIZER"
+# export DAPP_BUILD_OPTIMIZE_RUNS=1
+
+DSS_EXEC_LIB=$(< DssExecLib.address)
+echo "Using DssExecLib at: $DSS_EXEC_LIB"
+export DAPP_LIBRARIES=" lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:$DSS_EXEC_LIB"
 export DAPP_LINK_TEST_LIBRARIES=0
 
-if [[ -z "$1" ]]; then
+if [[ -z "$MATCH" ]]; then
   dapp --use solc:0.6.12 test --rpc-url="$ETH_RPC_URL" -v
 else
-  dapp --use solc:0.6.12 test --rpc-url="$ETH_RPC_URL" --match "$1" -vv
+  dapp --use solc:0.6.12 test --rpc-url="$ETH_RPC_URL" --match "$MATCH" -vv
 fi
