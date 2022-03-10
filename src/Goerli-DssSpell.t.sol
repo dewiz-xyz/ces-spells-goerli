@@ -1,8 +1,27 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// Copyright (C) 2021-2022 Dai Foundation
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
+
+interface DenyProxyLike {
+    function denyProxy(address) external;
+}
 
 contract DssSpellTest is GoerliDssSpellTestBase {
 
@@ -36,23 +55,97 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testCollateralIntegrations() public {
+    function testRemoveChainlogValues() private {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        try chainLog.getAddress("XXX") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+    }
+
+    // function testAAVEDirectBarChange() public {
+    //     DirectDepositLike join = DirectDepositLike(addr.addr("MCD_JOIN_DIRECT_AAVEV2_DAI"));
+    //     assertEq(join.bar(), 3.5 * 10**27 / 100);
+    //
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
+    //
+    //     assertEq(join.bar(), 2.85 * 10**27 / 100);
+    // }
+
+    function testCollateralIntegrations() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-
+        checkIlkIntegration(
+            "DUMMY-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_DUMMY_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_DUMMY_A")),
+            addr.addr("PIP_DUMMY"),
+            false,
+            false,
+            false
+        );
     }
 
-    function testNewChainlogValues() public {
+    function testLerpSurplusBuffer() private { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new SB lerp tests here
+
+        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("NAME"));
+
+        uint256 duration = 210 days;
+        hevm.warp(block.timestamp + duration / 2);
+        assertEq(vow.hump(), 60 * MILLION * RAD);
+        lerp.tick();
+        assertEq(vow.hump(), 75 * MILLION * RAD);
+        hevm.warp(block.timestamp + duration / 2);
+        lerp.tick();
+        assertEq(vow.hump(), 90 * MILLION * RAD);
+        assertTrue(lerp.done());
+    }
+
+    function testNewChainlogValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
+        assertEq(chainLog.getAddress("DUMMY"), addr.addr("DUMMY"));
+        assertEq(chainLog.getAddress("PIP_DUMMY"), addr.addr("PIP_DUMMY"));
+        assertEq(chainLog.getAddress("MCD_JOIN_DUMMY_A"), addr.addr("MCD_JOIN_DUMMY_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_DUMMY_A"), addr.addr("MCD_CLIP_DUMMY_A"));
 
-        assertEq(chainLog.version(), "1.9.12");
+        assertEq(chainLog.version(), "0.2.0");
+    }
+
+    function testNewIlkRegistryValues() public { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new ilk registry values tests here
+        assertEq(reg.pos("DUMMY-A"), 1);
+        assertEq(reg.join("DUMMY-A"), addr.addr("MCD_JOIN_DUMMY_A"));
+        assertEq(reg.gem("DUMMY-A"), addr.addr("DUMMY"));
+        assertEq(reg.dec("DUMMY-A"), DSTokenAbstract(addr.addr("DUMMY")).decimals());
+        assertEq(reg.class("DUMMY-A"), 1);
+        assertEq(reg.pip("DUMMY-A"), addr.addr("PIP_DUMMY"));
+        assertEq(reg.xlip("DUMMY-A"), addr.addr("MCD_CLIP_DUMMY_A"));
+        //assertEq(reg.name("DUMMY-A"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
+        assertEq(reg.symbol("DUMMY-A"), "DUMMY");
     }
 
     function testFailWrongDay() public {
@@ -106,6 +199,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(totalGas <= 10 * MILLION);
     }
 
+    // The specific date doesn't matter that much since function is checking for difference between warps
     function test_nextCastTime() public {
         hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
 
@@ -173,11 +267,35 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_auth() public {
+    function test_OSMs() private { // make public to use
+        address READER_ADDR = address(0);
+
+        // Track OSM authorizations here
+        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 1);
+    }
+
+    function test_Medianizers() private { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Track Median authorizations here
+        address SET_TOKEN    = address(0);
+        address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
+        assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
+    }
+
+    function test_auth() private { // make public to use
         checkAuth(false);
     }
 
-    function test_auth_in_sources() public {
+    function test_auth_in_sources() private { // make public to use
         checkAuth(true);
     }
 
