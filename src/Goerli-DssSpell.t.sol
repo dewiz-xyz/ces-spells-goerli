@@ -80,7 +80,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     //     assertEq(join.bar(), 2.85 * 10**27 / 100);
     // }
 
-    function testCollateralIntegrations() private { // make public to use
+    function testCollateralIntegrations() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -345,40 +345,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
         assertEq(expectedHash, actualHash);
     }
-
-    function test_flashKiller() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        FlashAbstract flash = FlashAbstract(addr.addr("MCD_FLASH"));
-        address killer = addr.addr("FLASH_KILLER");
-
-        assertEq(flash.wards(killer), 1);
-
-        // Emulate Global Settlement
-        hevm.store(
-            address(end),
-            keccak256(abi.encode(address(this), uint256(0))),
-            bytes32(uint256(1)));
-        end.cage();
-
-        assertTrue(flash.max() > 0);
-        FlashKillerLike(killer).kill();
-        assertEq(flash.max(), 0);
-    }
-
-    function testFail_flashKiller() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        address killer = addr.addr("FLASH_KILLER");
-
-        FlashKillerLike(killer).kill();
-    }
-}
-
-interface FlashKillerLike {
-    function kill() external;
 }
