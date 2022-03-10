@@ -41,10 +41,11 @@ contract DssSpellCollateralOnboardingAction {
     uint256 constant MILLION = 10 ** 6;
     uint256 constant RAY     = 10 ** 27;
 
-    address constant DUMMY            = 0x0EEb733A46e66e9dA6f8E96BF62fb7bA974A44e7;
-    address constant PIP_DUMMY        = 0xDE6631E06feD4E32Ce8A3cc9Aed8b65b02231BAe;
-    address constant MCD_JOIN_DUMMY_A = 0x7F23a8550f038aC18Ba59442Eafeac1e0a19C759;
-    address constant MCD_CLIP_DUMMY_A = address(0); // TODO
+    address constant DUMMY                 = 0x0EEb733A46e66e9dA6f8E96BF62fb7bA974A44e7;
+    address constant PIP_DUMMY             = 0xDE6631E06feD4E32Ce8A3cc9Aed8b65b02231BAe;
+    address constant MCD_JOIN_DUMMY_A      = 0x7F23a8550f038aC18Ba59442Eafeac1e0a19C759;
+    address constant MCD_CLIP_DUMMY_A      = 0x9043b3529Ef841dE4D481ABED3243F366D220c68;
+    address constant MCD_CLIP_CALC_DUMMY_A = 0x1Dc45AAB80636300ADF72Ec4b01e2868BFC9De83;
 
     // --- Math ---
 
@@ -60,8 +61,8 @@ contract DssSpellCollateralOnboardingAction {
                 ilk:                  'DUMMY-A',
                 gem:                  DUMMY,
                 join:                 MCD_JOIN_DUMMY_A,
-                clip:                 address(0),
-                calc:                 address(0),
+                clip:                 MCD_CLIP_DUMMY_A,
+                calc:                 MCD_CLIP_CALC_DUMMY_A,
                 pip:                  PIP_DUMMY,
                 isLiquidatable:       false,
                 isOSM:                false,
