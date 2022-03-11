@@ -10,7 +10,7 @@ baseFee=$(seth basefee)
 [[ -n "$ETH_GAS_PRICE" ]] && ethGasPriceLtBaseFee=$(echo "$ETH_GAS_PRICE < $baseFee" | bc)
 [[ "$ethGasPriceLtBaseFee" == 1 ]] && export "ETH_GAS_PRICE=$(echo "$baseFee * 3" | bc)"
 
-CHANGELOG=0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F
+CHANGELOG=0x7EafEEa64bF6F79A79853F4A660e0960c821BA50
 
 if [[ "$1" =~ 0x* ]]; then
     target=$1
