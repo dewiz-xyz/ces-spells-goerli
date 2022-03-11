@@ -77,7 +77,7 @@ contract Addresses {
         addr["PROXY_DEPLOYER"]              = 0x4DEd538D7edDb5F7E52f0B152C3c46D454d0075a;
         addr["MIP21_LIQUIDATION_ORACLE"]    = 0x493A7F7E6f44D3bd476bc1bfBBe191164269C0Cc;
         addr["DUMMY"]                       = 0x0EEb733A46e66e9dA6f8E96BF62fb7bA974A44e7;
-        addr["PIP_DUMMY"]                   = 0xDE6631E06feD4E32Ce8A3cc9Aed8b65b02231BAe;
+        addr["PIP_DUMMY"]                   = 0x8b648b13fcb0FB767A8E406ECF1071DFC3A46856;
         addr["MCD_JOIN_DUMMY_A"]            = 0x7F23a8550f038aC18Ba59442Eafeac1e0a19C759;
         addr["MCD_CLIP_DUMMY_A"]            = 0x9043b3529Ef841dE4D481ABED3243F366D220c68;
         addr["MCD_CLIP_CALC_DUMMY_A"]       = 0x1Dc45AAB80636300ADF72Ec4b01e2868BFC9De83;

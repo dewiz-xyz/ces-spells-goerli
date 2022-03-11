@@ -42,7 +42,7 @@ contract DssSpellCollateralOnboardingAction {
     uint256 constant RAY     = 10 ** 27;
 
     address constant DUMMY                 = 0x0EEb733A46e66e9dA6f8E96BF62fb7bA974A44e7;
-    address constant PIP_DUMMY             = 0xDE6631E06feD4E32Ce8A3cc9Aed8b65b02231BAe;
+    address constant PIP_DUMMY             = 0x8b648b13fcb0FB767A8E406ECF1071DFC3A46856;
     address constant MCD_JOIN_DUMMY_A      = 0x7F23a8550f038aC18Ba59442Eafeac1e0a19C759;
     address constant MCD_CLIP_DUMMY_A      = 0x9043b3529Ef841dE4D481ABED3243F366D220c68;
     address constant MCD_CLIP_CALC_DUMMY_A = 0x1Dc45AAB80636300ADF72Ec4b01e2868BFC9De83;
@@ -69,16 +69,16 @@ contract DssSpellCollateralOnboardingAction {
                 whitelistOSM:         true,
                 ilkDebtCeiling:       1000 * BILLION,
                 minVaultAmount:       1000,
-                maxLiquidationAmount: 0,
-                liquidationPenalty:   0,
+                maxLiquidationAmount: 3 * MILLION,
+                liquidationPenalty:   1300,        // 13% penalty fee
                 ilkStabilityFee:      ZERO_PCT_RATE,
-                startingPriceFactor:  0,
-                breakerTolerance:     0,
-                auctionDuration:      0,
-                permittedDrop:        0,
-                liquidationRatio:     100,
-                kprFlatReward:        0,
-                kprPctReward:         0
+                startingPriceFactor:  13000,       // Auction price begins at 130% of oracle
+                breakerTolerance:     5000,        // Allows for a 50% hourly price drop before disabling liquidations
+                auctionDuration:      140 minutes,
+                permittedDrop:        4000,        // 40% price drop before reset
+                liquidationRatio:     16000,       // 160% collateralization
+                kprFlatReward:        300,         // 300 Dai
+                kprPctReward:         10           // 0.1%
             })
         );
 

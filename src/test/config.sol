@@ -117,20 +117,20 @@ contract Config {
             vow_dump:              250,                     // In whole Dai units
             vow_sump:              50 * THOUSAND,           // In whole Dai units
             vow_bump:              30 * THOUSAND,           // In whole Dai units
-            vow_hump_min:          250 * MILLION,           // In whole Dai units
-            vow_hump_max:          250 * MILLION,           // In whole Dai units
+            vow_hump_min:          0,           // In whole Dai units
+            vow_hump_max:          1000 * MILLION,           // In whole Dai units
             flap_beg:              400,                     // in basis points
             flap_ttl:              30 minutes,              // in seconds
             flap_tau:              72 hours,                // in seconds
             flap_lid:              150 * THOUSAND,          // in whole Dai units
             cat_box:               20 * MILLION,            // In whole Dai units
             dog_Hole:              100 * MILLION,           // In whole Dai units
-            esm_min:               100 * THOUSAND,          // In whole MKR units
+            esm_min:               50 * THOUSAND,          // In whole MKR units
             pause_authority:       chief,                   // Pause authority
             osm_mom_authority:     chief,                   // OsmMom authority
             flipper_mom_authority: chief,                   // FlipperMom authority
             clipper_mom_authority: chief,                   // ClipperMom authority
-            ilk_count:             49                       // Num expected in system
+            ilk_count:             2                       // Num expected in system
         });
 
         //
@@ -144,12 +144,12 @@ contract Config {
         afterSpell.collaterals["ETH-A"] = CollateralValues({
             aL_enabled:   true,            // DssAutoLine is enabled?
             aL_line:      15 * BILLION,    // In whole Dai units
-            aL_gap:       150 * MILLION,   // In whole Dai units
-            aL_ttl:       6 hours,         // In seconds
+            aL_gap:       100 * MILLION,   // In whole Dai units
+            aL_ttl:       8 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
-            dust:         15 * THOUSAND,   // In whole Dai units
-            pct:          225,             // In basis points
-            mat:          14500,           // In basis points
+            dust:         10 * THOUSAND,   // In whole Dai units
+            pct:          200,             // In basis points
+            mat:          15000,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
             chop:         1300,            // In basis points
@@ -158,8 +158,39 @@ contract Config {
             flip_ttl:     0,               // In seconds
             flip_tau:     0,               // In seconds
             flipper_mom:  0,               // 1 if circuit breaker enabled
-            dog_hole:     65 * MILLION,
-            clip_buf:     12000,
+            dog_hole:     30 * MILLION,
+            clip_buf:     13000,
+            clip_tail:    140 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    90,
+            calc_cut:     9900,
+            lerp:         false
+        });
+
+        afterSpell.collaterals["DUMMY-A"] = CollateralValues({
+            aL_enabled:   true,            // DssAutoLine is enabled?
+            aL_line:      100 * MILLION,    // In whole Dai units
+            aL_gap:       50 * MILLION,   // In whole Dai units
+            aL_ttl:       1 hours,       // In seconds
+            line:         0,               // In whole Dai units  // Not checked here as there is auto line
+            dust:         1 * THOUSAND,   // In whole Dai units
+            pct:          0,               // In basis points
+            mat:          16000,           // In basis points
+            liqType:      "clip",          // "" or "flip" or "clip"
+            liqOn:        false,           // If liquidations are enabled
+            chop:         1300,            // In basis points
+            cat_dunk:     0,               // In whole Dai units
+            flip_beg:     0,               // In basis points
+            flip_ttl:     0,               // In seconds
+            flip_tau:     0,               // In seconds
+            flipper_mom:  0,               // 1 if circuit breaker enabled
+            dog_hole:     3 * MILLION,
+            clip_buf:     13000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
