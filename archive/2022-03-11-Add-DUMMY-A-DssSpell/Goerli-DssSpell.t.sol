@@ -80,19 +80,19 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     //     assertEq(join.bar(), 2.85 * 10**27 / 100);
     // }
 
-    function testCollateralIntegrations() private { // make public to use
+    function testCollateralIntegrations() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "TOKEN-X",
-            GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
-            ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
-            addr.addr("PIP_TOKEN"),
-            true,
-            true,
+            "DUMMY-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_DUMMY_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_DUMMY_A")),
+            addr.addr("PIP_DUMMY"),
+            false,
+            false,
             false
         );
     }
@@ -123,26 +123,29 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_FLAP"), addr.addr("MCD_FLAP"));
+        assertEq(chainLog.getAddress("DUMMY"), addr.addr("DUMMY"));
+        assertEq(chainLog.getAddress("PIP_DUMMY"), addr.addr("PIP_DUMMY"));
+        assertEq(chainLog.getAddress("MCD_JOIN_DUMMY_A"), addr.addr("MCD_JOIN_DUMMY_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_DUMMY_A"), addr.addr("MCD_CLIP_DUMMY_A"));
 
-        assertEq(chainLog.version(), "1.10.1");
+        assertEq(chainLog.version(), "0.2.0");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("TOKEN-X"), 47);
-        assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
-        assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
-        assertEq(reg.dec("TOKEN-X"), DSTokenAbstract(addr.addr("TOKEN")).decimals());
-        assertEq(reg.class("TOKEN-X"), 1);
-        assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
-        assertEq(reg.xlip("TOKEN-X"), addr.addr("MCD_CLIP_TOKEN_X"));
-        //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
-        assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
+        assertEq(reg.pos("DUMMY-A"), 1);
+        assertEq(reg.join("DUMMY-A"), addr.addr("MCD_JOIN_DUMMY_A"));
+        assertEq(reg.gem("DUMMY-A"), addr.addr("DUMMY"));
+        assertEq(reg.dec("DUMMY-A"), DSTokenAbstract(addr.addr("DUMMY")).decimals());
+        assertEq(reg.class("DUMMY-A"), 1);
+        assertEq(reg.pip("DUMMY-A"), addr.addr("PIP_DUMMY"));
+        assertEq(reg.xlip("DUMMY-A"), addr.addr("MCD_CLIP_DUMMY_A"));
+        //assertEq(reg.name("DUMMY-A"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
+        assertEq(reg.symbol("DUMMY-A"), "DUMMY");
     }
 
     function testFailWrongDay() public {
@@ -288,11 +291,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function test_auth() public { // make public to use
+    function test_auth() private { // make public to use
         checkAuth(false);
     }
 
-    function test_auth_in_sources() public { // make public to use
+    function test_auth_in_sources() private { // make public to use
         checkAuth(true);
     }
 
@@ -341,43 +344,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             actualHash := keccak256(ptr, size)
         }
         assertEq(expectedHash, actualHash);
-    }
-
-    function setFlaps() internal {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-        // Force creation of 1B surplus
-        hevm.store(
-            address(vat),
-            bytes32(uint256(keccak256(abi.encode(address(vow), uint256(5))))),
-            bytes32(uint256(1_000_000_000 * RAD))
-        );
-        assertEq(vat.dai(address(vow)), 1_000_000_000 * RAD);
-        vow.heal(vat.sin(address(vow)) - vow.Sin() - vow.Ash());
-    }
-
-    function test_new_flapper() public {
-        setFlaps();
-
-        assertEq(vow.flapper(), addr.addr("MCD_FLAP"));
-        assertEq(address(flap), addr.addr("MCD_FLAP"));
-
-        assertEq(flap.fill(), 0);
-        vow.flap();
-        assertEq(flap.fill(), 30_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 60_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 90_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 120_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 150_000 * RAD);
-    }
-
-    function testFail_new_flapper_exeed_limit() public {
-        test_new_flapper();
-        vow.flap();
     }
 }
