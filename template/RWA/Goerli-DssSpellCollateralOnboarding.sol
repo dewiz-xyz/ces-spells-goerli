@@ -245,16 +245,6 @@ contract DssSpellCollateralOnboardingAction {
         CHANGELOG.setAddress("RWA008_A_INPUT_CONDUIT", RWA008_A_INPUT_CONDUIT);
         CHANGELOG.setAddress("RWA008_A_OUTPUT_CONDUIT", RWA008_A_OUTPUT_CONDUIT);
 
-
-            // bytes32 _ilk,
-            // address _join,
-            // address _gem,
-            // uint256 _dec,
-            // uint256 _class,
-            // address _pip,
-            // address _xlip,
-            // string calldata _name,
-            // string calldata _symbol
         REGISTRY.put(
             "RWA008-A",
             MCD_JOIN_RWA008_A,

@@ -3,7 +3,10 @@ set -e
 
 [[ "$(seth chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
 
-[ -z "$ETH_FROM" ] && { echo "Please set a ETH_FROM env var"; exit 1 }
+[ -z "$ETH_FROM" ] && {
+    echo "Please set a ETH_FROM env var"
+    exit 1
+}
 
 ### ChainLog
 CHANGELOG=0x7EafEEa64bF6F79A79853F4A660e0960c821BA50
@@ -17,8 +20,7 @@ hat=$(seth call "$MCD_ADM" 'hat()(address)')
 approvals=$(seth call "$MCD_ADM" 'approvals(address)(uint256)' "$hat")
 deposits=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
 
-if [[ -z "$1" ]];
-then
+if [[ -z "$1" ]]; then
     echo "Please specify the Goerli Spell Address"
 else
     target=$DESIRED_HAT_APPROVALS
