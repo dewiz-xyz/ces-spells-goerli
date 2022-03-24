@@ -21,15 +21,15 @@ pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
+import "dss-interfaces/dss/VatAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
-interface FlashKillerLike {
-    function vat() external view returns (address);
-    function flash() external view returns (address);
+interface RelyLike {
+    function rely(address) external;
 }
 
-contract DssSpellAction is DssAction /*, DssSpellCollateralOnboardingAction */ {
+contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -39,11 +39,10 @@ contract DssSpellAction is DssAction /*, DssSpellCollateralOnboardingAction */ {
     }
 
     function actions() public override {
-        address CHAINLOG = DssExecLib.LOG;
+        ChainlogAbstract CHAINLOG = ChainlogAbstract(DssExecLib.LOG);
 
-        // onboardNewCollaterals();
-        ChainlogAbstract(CHAINLOG).setAddress("MCD_GOV", 0xF13af2a2f7AA8176f2ddde16d7629B90c7a62109);
-        DssExecLib.setChangelogVersion("0.2.1");
+        onboardNewCollaterals();
+        DssExecLib.setChangelogVersion("0.2.5");
     }
 }
 

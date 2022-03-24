@@ -23,6 +23,7 @@ contract Addresses {
 
     constructor() public {
         addr["CHANGELOG"]                   = 0x7EafEEa64bF6F79A79853F4A660e0960c821BA50;
+        addr["DEPLOYER"]                    = 0x23E91332984eEd55C88131C58295C8Dce379E2aB;
         addr["MULTICALL"]                   = 0x1B376C11C11b91f76840DE2DDF41A0D08EE95401;
         addr["FAUCET"]                      = 0xa473CdDD6E4FAc72481dc36f39A409D86980D187;
         addr["MCD_DEPLOY"]                  = 0x540f90a052Bf23Abc89A97137e5804924B2592C7;
@@ -30,6 +31,7 @@ contract Addresses {
         addr["CLIP_FAB"]                    = 0xCf9eeF87Dc95bc4d2EB19cef19c44c232E9180F2;
         addr["CALC_FAB"]                    = 0x26c77291bB139998285010AA1CB782AC738B29D4;
         addr["MCD_GOV"]                     = 0xF13af2a2f7AA8176f2ddde16d7629B90c7a62109;
+        addr["GOV_GUARD"]                   = 0x5fDBc9DD5e2d72a56E78858Cc246f22641dF0949;
         addr["MCD_IOU"]                     = 0xcFdCFdf5117fE65F52EaE30CC333faBA5310957b;
         addr["MCD_ADM"]                     = 0x653CDbDf4DB2915016E658919F23E284B193C44f;
         addr["VOTE_PROXY_FACTORY"]          = 0xD461B6D66d48A87a2364B14a3BBD3dCf9796dC17;
@@ -81,5 +83,13 @@ contract Addresses {
         addr["MCD_JOIN_DUMMY_A"]            = 0x7F23a8550f038aC18Ba59442Eafeac1e0a19C759;
         addr["MCD_CLIP_DUMMY_A"]            = 0x9043b3529Ef841dE4D481ABED3243F366D220c68;
         addr["MCD_CLIP_CALC_DUMMY_A"]       = 0x1Dc45AAB80636300ADF72Ec4b01e2868BFC9De83;
+
+        addr["RWA008AT2"] = 0xE3B8e9B2AdB2CE4B289C13F572b0426e6D8016B5;
+        addr["MCD_JOIN_RWA008AT2_A"] = 0xb7CBE4a7EE12c618Ef4b43FC620aB4e273f883E1;
+        addr["RWA008AT2_A_URN"] = 0xe42f68d8A8e955Be29AF833fdCCa92838271b007;
+        addr["RWA008AT2_A_INPUT_CONDUIT"] = 0x32c0254964697977a3aBC6Bad1D1E8C56Cc8fAb1;
+        addr["RWA008AT2_A_OUTPUT_CONDUIT"] = 0xcD6534b0f356d1b7b849974238Dd3733C9A1f2e5;
+        addr["RWA008AT2_A_OPERATOR"] = 0x3E774D9dfA578cc82C5b94a329230cD5736e9106;
+        addr["RWA008AT2_A_MATE"] = 0x969880695d8aDFB8e9C38982e07905CC42eD3fAd;
     }
 }
