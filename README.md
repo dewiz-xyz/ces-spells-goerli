@@ -1,15 +1,15 @@
-# spells-goerli
+# ces-spells-goerli
 
 ![Build Status](https://github.com/makerdao/spells-goerli/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)
 
-Staging repo for MakerDAO's Goerli executive spells.
+Staging repo for MakerDAO's Collateral Engineering Services Goerli executive spells.
 
 ## Instructions
 
 ### Getting Started
 
 ```bash
-$ git clone git@github.com:makerdao/spells-goerli.git
+$ git clone git@github.com:clio-finance/ces-spells-goerli.git
 $ dapp update
 ```
 
