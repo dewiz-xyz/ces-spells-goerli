@@ -27,7 +27,7 @@ import "dss-interfaces/dapp/DSTokenAbstract.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 
-import "./test/addresses_ces_goerli.sol";
+import "./test/addresses_goerli.sol";
 
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);

@@ -8,7 +8,7 @@ import "dss-interfaces/Interfaces.sol";
 
 import "./test/rates.sol";
 // import "./test/addresses_goerli.sol";
-import "./test/addresses_ces_goerli.sol";
+import "./test/addresses_goerli.sol";
 import "./test/addresses_deployers.sol";
 import "./test/config.sol";
 
