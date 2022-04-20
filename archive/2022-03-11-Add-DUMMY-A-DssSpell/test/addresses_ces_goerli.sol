@@ -81,5 +81,7 @@ contract Addresses {
         addr["MCD_JOIN_DUMMY_A"]            = 0x7F23a8550f038aC18Ba59442Eafeac1e0a19C759;
         addr["MCD_CLIP_DUMMY_A"]            = 0x9043b3529Ef841dE4D481ABED3243F366D220c68;
         addr["MCD_CLIP_CALC_DUMMY_A"]       = 0x1Dc45AAB80636300ADF72Ec4b01e2868BFC9De83;
+        addr["RWA008_FAB"]                  = 0xE00724a26Dd7a6F24333926bc70c80abb4b43edC; // TODO adjust
+        addr["RWA008_OPERATOR"]             = 0x1Dc45AAB80636300ADF72Ec4b01e2868BFC9De83; // TODO adjust
     }
 }

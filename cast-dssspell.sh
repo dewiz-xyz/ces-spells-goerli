@@ -43,7 +43,7 @@ else
 
     seth send "$1" 'schedule()'
 
-    sleep 120s
+    sleep 120
 
     seth send "$1" 'cast()'
 

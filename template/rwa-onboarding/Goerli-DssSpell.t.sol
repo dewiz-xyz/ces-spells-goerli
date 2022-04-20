@@ -23,6 +23,10 @@ interface WardsLike {
     function wards(address) external view returns(uint256);
 }
 
+interface ERC20Like {
+    function balanceOf (address) external returns (uint256);
+}
+
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);
     function ilks(bytes32) external returns (string memory, address, uint48, uint48);
@@ -75,6 +79,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaUrnLike rwaurn = RwaUrnLike(addr.addr("RWA008_A_URN"));
     RwaInputConduitLike rwaconduitin = RwaInputConduitLike(addr.addr("RWA008_A_INPUT_CONDUIT"));
     RwaOutputConduitLike rwaconduitout = RwaOutputConduitLike(addr.addr("RWA008_A_OUTPUT_CONDUIT"));
+    address rwaOperator = addr.addr("RWA008_OPERATOR");
 
     address makerDeployer06 = 0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711;
 
@@ -192,6 +197,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(chainLog.getAddress("RWA008_A_INPUT_CONDUIT"),  addr.addr("RWA008_A_INPUT_CONDUIT"));
         assertEq(chainLog.getAddress("RWA008_A_OUTPUT_CONDUIT"), addr.addr("RWA008_A_OUTPUT_CONDUIT"));
 
+        // TODO Change this to the right version
         assertEq(chainLog.version(), "0.2.5");
     }
 
@@ -347,6 +353,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(!oracle.good("RWA008-A"));
         (, address pip, , ) = oracle.ilks("RWA008-A");
         assertEq(DSValueAbstract(pip).read(), bytes32(0));
+    }
+
+    function testSpellIsCast_RWA008_OPERATOR_GET_RWA008_TOKEN() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        assertEq(ERC20Like(rwagem).balanceOf(rwaOperator), 1 * WAD);
     }
 
     function testSpellIsCast_RWA008_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
