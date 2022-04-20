@@ -186,14 +186,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("RWA008AT3"),                  addr.addr("RWA008AT3"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RWA008AT3_A"),       addr.addr("MCD_JOIN_RWA008AT3_A"));
-        assertEq(chainLog.getAddress("RWA008AT3_A_URN"),            addr.addr("RWA008AT3_A_URN"));
-        assertEq(chainLog.getAddress("RWA008AT3_A_INPUT_CONDUIT"),  addr.addr("RWA008AT3_A_INPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA008AT3_A_OUTPUT_CONDUIT"), addr.addr("RWA008AT3_A_OUTPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA_URN_PROXY_VIEW"),         addr.addr("RWA_URN_PROXY_VIEW"));
-
-        assertEq(chainLog.version(), "0.3.0");
+        assertEq(chainLog.getAddress("RWA_TOKEN_FAB"), addr.addr('RWA_TOKEN_FAB'));
+        assertEq(chainLog.version(), "0.3.2");
     }
 
     function testNewIlkRegistryValues() public { // make public to use
