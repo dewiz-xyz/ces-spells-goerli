@@ -73,13 +73,14 @@ interface RwaInputConduitLike {
 contract DssSpellTest is GoerliDssSpellTestBase {
     // GOERLI ADDRESSES
     bytes32 constant ilk = "RWA008-A";
+    address constant rwaOperator = 0x0000000000000000000000000000000000000000; // TODO set the right address
+
     DSTokenAbstract rwagem = DSTokenAbstract(addr.addr("RWA008"));
     GemJoinAbstract rwajoin = GemJoinAbstract(addr.addr("MCD_JOIN_RWA008_A"));
     RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
     RwaUrnLike rwaurn = RwaUrnLike(addr.addr("RWA008_A_URN"));
     RwaInputConduitLike rwaconduitin = RwaInputConduitLike(addr.addr("RWA008_A_INPUT_CONDUIT"));
     RwaOutputConduitLike rwaconduitout = RwaOutputConduitLike(addr.addr("RWA008_A_OUTPUT_CONDUIT"));
-    address rwaOperator = addr.addr("RWA008_OPERATOR");
 
     address makerDeployer06 = 0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711;
 

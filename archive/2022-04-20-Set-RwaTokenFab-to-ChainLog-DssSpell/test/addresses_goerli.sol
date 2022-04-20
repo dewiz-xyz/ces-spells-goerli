@@ -88,6 +88,5 @@ contract Addresses {
         addr["RWA008AT3_A_INPUT_CONDUIT"]   = 0x436FA0b3437BbB749e752fa23fDf3412aC508Eaf;
         addr["RWA008AT3_A_OUTPUT_CONDUIT"]  = 0x48250acC257FF9011715C68017B3F0ef26103B3c;
         addr["RWA_TOKEN_FAB"]               = 0xE00724a26Dd7a6F24333926bc70c80abb4b43edC;
-        addr["RWA008_OPERATOR"]             = 0x0000000000000000000000000000000000000000; // TODO set operator address
     }
 }
