@@ -375,17 +375,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         hevm.warp(now + 10 days); // Let rate be > 1
 
-        uint256 totalSupplyBeforeCheat = rwagem.totalSupply();
         // set the balance of this contract
         hevm.store(address(rwagem), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(2 * WAD)));
-        // increase the total supply
-        hevm.store(address(rwagem), bytes32(uint256(2)), bytes32(uint256(rwagem.totalSupply() + 2 * WAD)));
         // setting address(this) as operator
         hevm.store(address(rwaurn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
 
         (uint256 preInk, uint256 preArt) = vat.urns(ilk, address(rwaurn));
 
-        assertEq(rwagem.totalSupply(), totalSupplyBeforeCheat + 2 * WAD);
         assertEq(rwagem.balanceOf(address(this)), 2 * WAD);
         assertEq(rwaurn.can(address(this)), 1);
 
@@ -405,11 +401,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
 
         // wards
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
         // can
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(2))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
         // may
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
 
         assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
 
@@ -447,9 +443,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.store(address(dai), bytes32(uint256(1)), bytes32(currentDaiSupply + (daiToPay - art))); // Forcing extra DAI total supply to accomodate the accumulated fee
         hevm.store(address(dai), keccak256(abi.encode(address(this), uint256(2))), bytes32(daiToPay)); // Forcing extra DAI balance to pay accumulated fee
         // wards
-        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1)));
         // may
-        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(4))), bytes32(uint256(1)));
 
         assertEq(dai.balanceOf(address(rwaconduitin)), 0);
         dai.transfer(address(rwaconduitin), daiToPay);
