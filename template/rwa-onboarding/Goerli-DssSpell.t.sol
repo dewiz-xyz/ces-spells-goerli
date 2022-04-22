@@ -208,7 +208,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("RWA008-A"),    2);
+        assertEq(reg.pos("RWA008-A"),    4);
         assertEq(reg.join("RWA008-A"),   addr.addr("MCD_JOIN_RWA008_A"));
         assertEq(reg.gem("RWA008-A"),    addr.addr("RWA008"));
         assertEq(reg.dec("RWA008-A"),    DSTokenAbstract(addr.addr("RWA008")).decimals());
@@ -221,13 +221,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testNewPermissions() private {
-        address MCD_JOIN_RWA008AT1_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
+        address MCD_JOIN_RWA008_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA008AT1_A), 1);
+        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA008_A), 1);
     }
 
 
@@ -363,7 +363,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             assertTrue(spell.done());
         }
 
-        assertEq(ERC20Like(rwagem).balanceOf(rwaOperator), 1 * WAD);
+        assertEq(ERC20Like(address(rwagem)).balanceOf(rwaOperator), 1 * WAD);
     }
 
     function testSpellIsCast_RWA008_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
