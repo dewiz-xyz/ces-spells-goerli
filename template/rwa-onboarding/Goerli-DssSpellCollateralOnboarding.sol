@@ -243,6 +243,12 @@ contract DssSpellCollateralOnboardingAction {
         // sent RWA008 to RWA008_A_OPERATOR
         ERC20Like(RWA008).transfer(RWA008_A_OPERATOR, 1 * WAD);
 
+        // TODO: consider this approach:
+        // ERC20Like(RWA008).approve(RWA008_A_URN, 1 * WAD);
+        // RwaUrnLike(RWA00RWA008_A_URN).hope(address(this));
+        // RwaUrnLike(RWA00RWA008_A_URN).lock(1 * WAD);
+        // RwaUrnLike(RWA00RWA008_A_URN).nope(address(this));
+
         // ChainLog Updates
         // CHANGELOG.setAddress("MIP21_LIQUIDATION_ORACLE", MIP21_LIQUIDATION_ORACLE);
         // Add RWA008 contract to the changelog

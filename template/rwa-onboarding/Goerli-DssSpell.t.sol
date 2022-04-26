@@ -208,7 +208,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("RWA008-A"),    2);
+        assertEq(reg.pos("RWA008-A"),    4);
         assertEq(reg.join("RWA008-A"),   addr.addr("MCD_JOIN_RWA008_A"));
         assertEq(reg.gem("RWA008-A"),    addr.addr("RWA008"));
         assertEq(reg.dec("RWA008-A"),    DSTokenAbstract(addr.addr("RWA008")).decimals());
@@ -221,13 +221,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testNewPermissions() private {
-        address MCD_JOIN_RWA008AT1_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
+        address MCD_JOIN_RWA008_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA008AT1_A), 1);
+        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA008_A), 1);
     }
 
 
@@ -363,7 +363,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             assertTrue(spell.done());
         }
 
-        assertEq(ERC20Like(rwagem).balanceOf(rwaOperator), 1 * WAD);
+        assertEq(ERC20Like(address(rwagem)).balanceOf(rwaOperator), 1 * WAD);
     }
 
     function testSpellIsCast_RWA008_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
@@ -375,17 +375,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         hevm.warp(now + 10 days); // Let rate be > 1
 
-        uint256 totalSupplyBeforeCheat = rwagem.totalSupply();
         // set the balance of this contract
         hevm.store(address(rwagem), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(2 * WAD)));
-        // increase the total supply
-        hevm.store(address(rwagem), bytes32(uint256(2)), bytes32(uint256(rwagem.totalSupply() + 2 * WAD)));
         // setting address(this) as operator
         hevm.store(address(rwaurn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
 
         (uint256 preInk, uint256 preArt) = vat.urns(ilk, address(rwaurn));
 
-        assertEq(rwagem.totalSupply(), totalSupplyBeforeCheat + 2 * WAD);
         assertEq(rwagem.balanceOf(address(this)), 2 * WAD);
         assertEq(rwaurn.can(address(this)), 1);
 
@@ -405,11 +401,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
 
         // wards
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
         // can
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(2))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
         // may
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
 
         assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
 
@@ -447,9 +443,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.store(address(dai), bytes32(uint256(1)), bytes32(currentDaiSupply + (daiToPay - art))); // Forcing extra DAI total supply to accomodate the accumulated fee
         hevm.store(address(dai), keccak256(abi.encode(address(this), uint256(2))), bytes32(daiToPay)); // Forcing extra DAI balance to pay accumulated fee
         // wards
-        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1)));
         // may
-        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(4))), bytes32(uint256(1)));
 
         assertEq(dai.balanceOf(address(rwaconduitin)), 0);
         dai.transfer(address(rwaconduitin), daiToPay);
