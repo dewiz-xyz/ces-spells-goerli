@@ -162,7 +162,8 @@ contract DssSpellCollateralOnboardingAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant DOC = "QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant DOC = "QmXYZ";
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
 
@@ -266,7 +267,10 @@ contract DssSpellCollateralOnboardingAction {
             REG_CLASS_RWA,
             pip,
             address(0),
-            TokenDetailsLike(RWA008).name(),
+            // Either provide a name like:
+            "RWA008-A: SG Forge OFH",
+            // ... or use the token name:
+            // TokenDetailsLike(RWA008).name(),
             TokenDetailsLike(RWA008).symbol()
         );
     }
