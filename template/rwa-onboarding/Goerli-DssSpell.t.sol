@@ -220,8 +220,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.symbol("RWA008-A"), "RWA008");
     }
 
-    function testNewPermissions() private {
-        address MCD_JOIN_RWA008_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
+    function testNewPermissions() public {
+        address MCD_JOIN_RWA008_A = addr.addr("MCD_JOIN_RWA008_A");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
