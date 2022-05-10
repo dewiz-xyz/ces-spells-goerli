@@ -216,7 +216,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(reg.pip("RWA008-A"),    addr.addr("PIP_RWA008"));
         // We don't have auctions for this collateral
         // assertEq(reg.xlip("RWA008-A"),   addr.addr("MCD_CLIP_RWA008_A"));
-        assertEq(reg.name("RWA008-A"), "RWA-008");
+        assertEq(reg.name("RWA008-A"), "RWA008-A: SG Forge OFH");
         assertEq(reg.symbol("RWA008-A"), "RWA008");
     }
 
