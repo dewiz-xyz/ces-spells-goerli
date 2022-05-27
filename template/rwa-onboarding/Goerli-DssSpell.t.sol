@@ -216,12 +216,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(reg.pip("RWA008-A"),    addr.addr("PIP_RWA008"));
         // We don't have auctions for this collateral
         // assertEq(reg.xlip("RWA008-A"),   addr.addr("MCD_CLIP_RWA008_A"));
-        assertEq(reg.name("RWA008-A"), "RWA-008");
+        assertEq(reg.name("RWA008-A"), "RWA008-A: SG Forge OFH");
         assertEq(reg.symbol("RWA008-A"), "RWA008");
     }
 
-    function testNewPermissions() private {
-        address MCD_JOIN_RWA008_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
+    function testNewPermissions() public {
+        address MCD_JOIN_RWA008_A = addr.addr("MCD_JOIN_RWA008_A");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));

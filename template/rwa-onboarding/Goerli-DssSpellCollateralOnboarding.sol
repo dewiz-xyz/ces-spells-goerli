@@ -140,20 +140,18 @@ contract DssSpellCollateralOnboardingAction {
     IlkRegistryAbstract constant REGISTRY = IlkRegistryAbstract(0x8E8049Eb87673aC30D8d17CdDF4f0a08b5e7Cc0d);
 
     address constant MIP21_LIQUIDATION_ORACLE = 0x493A7F7E6f44D3bd476bc1bfBBe191164269C0Cc;
-    address constant RWA008 = 0xE3B8e9B2AdB2CE4B289C13F572b0426e6D8016B5;
-    address constant MCD_JOIN_RWA008_A = 0xb7CBE4a7EE12c618Ef4b43FC620aB4e273f883E1;
-    address constant RWA008_A_URN = 0xe42f68d8A8e955Be29AF833fdCCa92838271b007;
-    address constant RWA008_A_INPUT_CONDUIT = 0x32c0254964697977a3aBC6Bad1D1E8C56Cc8fAb1;
-    address constant RWA008_A_OUTPUT_CONDUIT = 0xcD6534b0f356d1b7b849974238Dd3733C9A1f2e5;
-    address constant RWA008_A_OPERATOR = 0x3E774D9dfA578cc82C5b94a329230cD5736e9106;
-    address constant RWA008_A_MATE = 0x969880695d8aDFB8e9C38982e07905CC42eD3fAd;
-    address constant RWA008_A_TESTING_MATE = 0xc0b362cbb0117Ec6A4b589f744d4dECb2768A2eB;
+    address constant RWA008 = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant MCD_JOIN_RWA008_A = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant RWA008_A_URN = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant RWA008_A_INPUT_CONDUIT = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant RWA008_A_OUTPUT_CONDUIT = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant RWA008_A_OPERATOR = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant RWA008_A_MATE = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
+    address constant RWA008_A_MATE_2 = 0x0000000000000000000000000000000000000000; // TODO CES team should provide
 
     uint256 constant RWA008_A_INITIAL_DC = 80000000 * RAD; // TODO RWA team should provide
     uint256 constant RWA008_A_INITIAL_PRICE = 52 * MILLION * WAD; // TODO RWA team should provide
     uint48 constant RWA008_A_TAU = 1 weeks; // TODO RWA team should provide
-
-    uint256 constant REG_CLASS_RWA = 3;
 
     /**
      * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
@@ -162,7 +160,9 @@ contract DssSpellCollateralOnboardingAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant DOC = "QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant DOC = "QmXYZ"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+
+    uint256 constant REG_CLASS_RWA = 3;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
 
@@ -237,8 +237,8 @@ contract DssSpellCollateralOnboardingAction {
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_MATE);
 
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_TESTING_MATE);
-        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_TESTING_MATE);
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE_2);
+        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_MATE_2);
 
         // sent RWA008 to RWA008_A_OPERATOR
         ERC20Like(RWA008).transfer(RWA008_A_OPERATOR, 1 * WAD);
@@ -266,7 +266,10 @@ contract DssSpellCollateralOnboardingAction {
             REG_CLASS_RWA,
             pip,
             address(0),
-            TokenDetailsLike(RWA008).name(),
+            // Either provide a name like:
+            "RWA008-A: SG Forge OFH",
+            // ... or use the token name:
+            // TokenDetailsLike(RWA008).name(),
             TokenDetailsLike(RWA008).symbol()
         );
     }
