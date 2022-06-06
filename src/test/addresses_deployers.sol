@@ -18,7 +18,6 @@
 pragma solidity ^0.6.12;
 
 contract Deployers {
-
     address[] public addr;
 
     constructor() public {

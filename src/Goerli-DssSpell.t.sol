@@ -20,61 +20,89 @@ pragma solidity 0.6.12;
 import "./Goerli-DssSpell.t.base.sol";
 
 interface WardsLike {
-    function wards(address) external view returns(uint256);
+    function wards(address) external view returns (uint256);
 }
 
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+
+    function ilks(bytes32)
+        external
+        returns (
+            string memory,
+            address,
+            uint48 toc,
+            uint48 tau
+        );
+
     function rely(address) external;
+
     function deny(address) external;
-    function init(bytes32, uint256, string calldata, uint48) external;
+
+    function init(
+        bytes32,
+        uint256,
+        string calldata,
+        uint48
+    ) external;
+
     function bump(bytes32 ilk, uint256 val) external;
+
     function tell(bytes32) external;
+
     function cure(bytes32) external;
+
     function cull(bytes32, address) external;
+
     function good(bytes32) external view returns (bool);
 }
 
 interface RwaUrnLike {
     function hope(address) external;
+
     function can(address) external view returns (uint256);
+
     function lock(uint256) external;
+
     function draw(uint256) external;
+
     function wipe(uint256) external;
+
     function free(uint256) external;
 }
 
 interface RwaOutputConduitLike {
     function wards(address) external returns (uint256);
-    function can(address) external returns (uint256);
-    function rely(address) external;
-    function deny(address) external;
-    function hope(address) external;
-    function mate(address) external;
-    function nope(address) external;
-    function bud(address) external returns (uint256);
-    function pick(address) external;
-    function push() external;
-}
 
-interface RwaInputConduitLike {
-    function rely(address usr) external;
-    function deny(address usr) external;
-    function mate(address usr) external;
-    function hate(address usr) external;
+    function can(address) external returns (uint256);
+
+    function may(address) external view returns (uint256);
+
+    function rely(address) external;
+
+    function deny(address) external;
+
+    function hope(address) external;
+
+    function mate(address) external;
+
+    function nope(address) external;
+
+    function bud(address) external returns (uint256);
+
+    function pick(address) external;
+
     function push() external;
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
     // GOERLI ADDRESSES
-    bytes32 constant ilk = "RWA008AT3-A";
-    DSTokenAbstract rwagem = DSTokenAbstract(addr.addr("RWA008AT3"));
-    GemJoinAbstract rwajoin = GemJoinAbstract(addr.addr("MCD_JOIN_RWA008AT3_A"));
+    bytes32 constant ilk = "RWA009AT1-A";
+    DSTokenAbstract rwagem = DSTokenAbstract(addr.addr("RWA009AT1"));
+    GemJoinAbstract rwajoin = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009AT1_A"));
     RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
-    RwaUrnLike rwaurn = RwaUrnLike(addr.addr("RWA008AT3_A_URN"));
-    RwaInputConduitLike rwaconduitin = RwaInputConduitLike(addr.addr("RWA008AT3_A_INPUT_CONDUIT"));
-    RwaOutputConduitLike rwaconduitout = RwaOutputConduitLike(addr.addr("RWA008AT3_A_OUTPUT_CONDUIT"));
+    RwaUrnLike rwaurn = RwaUrnLike(addr.addr("RWA009AT1_A_URN"));
+    RwaOutputConduitLike rwaconduitout = RwaOutputConduitLike(addr.addr("RWA009AT1_A_OUTPUT_CONDUIT"));
 
     address makerDeployer06 = 0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711;
 
@@ -92,13 +120,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         string memory description = new DssSpell().description();
         assertTrue(bytes(description).length > 0, "TestError/spell-description-length");
         // DS-Test can't handle strings directly, so cast to a bytes32.
-        assertEq(stringToBytes32(spell.description()),
-                stringToBytes32(description), "TestError/spell-description");
+        assertEq(stringToBytes32(spell.description()), stringToBytes32(description), "TestError/spell-description");
 
-        if(address(spell) != address(spellValues.deployed_spell)) {
-            assertEq(spell.expiration(), block.timestamp + spellValues.expiration_threshold, "TestError/spell-expiration");
+        if (address(spell) != address(spellValues.deployed_spell)) {
+            assertEq(
+                spell.expiration(),
+                block.timestamp + spellValues.expiration_threshold,
+                "TestError/spell-expiration"
+            );
         } else {
-            assertEq(spell.expiration(), spellValues.deployed_spell_created + spellValues.expiration_threshold, "TestError/spell-expiration");
+            assertEq(
+                spell.expiration(),
+                spellValues.deployed_spell_created + spellValues.expiration_threshold,
+                "TestError/spell-expiration"
+            );
 
             // If the spell is deployed compare the on-chain bytecode size with the generated bytecode size.
             // extcodehash doesn't match, potentially because it's address-specific, avenue for further research.
@@ -132,35 +167,26 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
     }
 
-    // function testAAVEDirectBarChange() public {
-    //     DirectDepositLike join = DirectDepositLike(addr.addr("MCD_JOIN_DIRECT_AAVEV2_DAI"));
-    //     assertEq(join.bar(), 3.5 * 10**27 / 100);
-    //
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
-    //
-    //     assertEq(join.bar(), 2.85 * 10**27 / 100);
-    // }
-
-    function testCollateralIntegrations() private { // make public to use
+    function testCollateralIntegrations() private {
+        // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "RWA008AT3-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RWA008AT3_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RWA008AT3_A")),
-            addr.addr("PIP_RWA008AT3"),
+            "RWA009AT1-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RWA009AT1_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RWA009AT1_A")),
+            addr.addr("PIP_RWA009AT1"),
             false,
             false,
             false
         );
     }
 
-    function testLerpSurplusBuffer() private { // make public to use
+    function testLerpSurplusBuffer() private {
+        // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -180,46 +206,51 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make public to use
+    function testNewChainlogValues() public {
+        // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("RWA_TOKEN_FAB"), addr.addr('RWA_TOKEN_FAB'));
-        assertEq(chainLog.version(), "0.3.2");
+        assertEq(chainLog.getAddress("RWA009AT1"), addr.addr("RWA009AT1"));
+        assertEq(chainLog.getAddress("MCD_JOIN_RWA009AT1_A"), addr.addr("MCD_JOIN_RWA009AT1_A"));
+        assertEq(chainLog.getAddress("RWA009AT1_A_URN"), addr.addr("RWA009AT1_A_URN"));
+        assertEq(chainLog.getAddress("RWA009AT1_A_OUTPUT_CONDUIT"), addr.addr("RWA009AT1_A_OUTPUT_CONDUIT"));
+
+        assertEq(chainLog.version(), "0.3.0");
     }
 
-    function testNewIlkRegistryValues() public { // make public to use
+    function testNewIlkRegistryValues() public {
+        // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("RWA008AT3-A"),    3);
-        assertEq(reg.join("RWA008AT3-A"),   addr.addr("MCD_JOIN_RWA008AT3_A"));
-        assertEq(reg.gem("RWA008AT3-A"),    addr.addr("RWA008AT3"));
-        assertEq(reg.dec("RWA008AT3-A"),    DSTokenAbstract(addr.addr("RWA008AT3")).decimals());
-        assertEq(reg.class("RWA008AT3-A"),  3); // Class 3 = Rwa Token
-        // assertEq(reg.pip("RWA008AT3-A"),    addr.addr("PIP_RWA008AT3"));
+        assertEq(reg.pos("RWA009AT1-A"), 6);
+        assertEq(reg.join("RWA009AT1-A"), addr.addr("MCD_JOIN_RWA009AT1_A"));
+        assertEq(reg.gem("RWA009AT1-A"), addr.addr("RWA009AT1"));
+        assertEq(reg.dec("RWA009AT1-A"), DSTokenAbstract(addr.addr("RWA009AT1")).decimals());
+        assertEq(reg.class("RWA009AT1-A"), 3); // Class 3 = Rwa Token
+        // assertEq(reg.pip("RWA009AT1-A"),    addr.addr("PIP_RWA009AT1"));
         // We don't have auctions for this collateral
-        // assertEq(reg.xlip("RWA008AT3-A"),   addr.addr("MCD_CLIP_RWA008AT3_A"));
-        assertEq(reg.name("RWA008AT3-A"), "RWA-008-AT3");
-        assertEq(reg.symbol("RWA008AT3-A"), "RWA008AT3");
+        // assertEq(reg.xlip("RWA009AT1-A"),   addr.addr("MCD_CLIP_RWA009AT1_A"));
+        assertEq(reg.name("RWA009AT1-A"), "RWA-009AT1");
+        assertEq(reg.symbol("RWA009AT1-A"), "RWA009AT1");
     }
 
     function testNewPermissions() private {
-        address MCD_JOIN_RWA008AT3AT1_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
+        address MCD_JOIN_RWA009_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA008AT3AT1_A), 1);
+        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA009_A), 1);
     }
 
-
-    function testSpellIsCast_RWA008AT3_INTEGRATION_BUMP() public {
+    function testSpellIsCast_RWA009_INTEGRATION_BUMP() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -233,14 +264,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
-        (, address pip, , ) = oracle.ilks("RWA008AT3-A");
+        (, address pip, , ) = oracle.ilks("RWA009AT1-A");
 
         assertEq(DSValueAbstract(pip).read(), bytes32(52 * MILLION * WAD));
         bumpSpell.cast();
         assertEq(DSValueAbstract(pip).read(), bytes32(60 * MILLION * WAD));
     }
 
-    function testSpellIsCast_RWA008AT3_INTEGRATION_TELL() public {
+    function testSpellIsCast_RWA009_INTEGRATION_TELL() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -254,18 +285,19 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
-        (, , , uint48 tocPre) = oracle.ilks("RWA008AT3-A");
+        (, , , uint48 tocPre) = oracle.ilks("RWA009AT1-A");
         assertTrue(tocPre == 0);
-        assertTrue(oracle.good("RWA008AT3-A"));
+        assertTrue(oracle.good("RWA009AT1-A"));
         tellSpell.cast();
-        (, , , uint48 tocPost) = oracle.ilks("RWA008AT3-A");
+        (, , , uint48 tocPost) = oracle.ilks("RWA009AT1-A");
         assertTrue(tocPost > 0);
-        assertTrue(oracle.good("RWA008AT3-A"));
+        // should be not good as we have TAU 0
+        assertTrue(!oracle.good("RWA009AT1-A"));
         hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA008AT3-A"));
+        assertTrue(!oracle.good("RWA009AT1-A"));
     }
 
-    function testSpellIsCast_RWA008AT3_INTEGRATION_TELL_CURE_GOOD() public {
+    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL_CURE_GOOD() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -280,7 +312,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         tellSpell.cast();
-        assertTrue(oracle.good(ilk));
+        assertTrue(!oracle.good(ilk));
         hevm.warp(block.timestamp + 2 weeks);
         assertTrue(!oracle.good(ilk));
 
@@ -296,7 +328,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(uint256(toc), 0);
     }
 
-    function testFailSpellIsCast_RWA008AT3_INTEGRATION_CURE() public {
+    function testFailSpellIsCast_RWA009AT1_INTEGRATION_CURE() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -310,15 +342,17 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         cureSpell.cast();
+        (, , , uint48 toc) = oracle.ilks(ilk);
+        assertEq(uint256(toc), 0);
     }
 
-    function testSpellIsCast_RWA008AT3_INTEGRATION_TELL_CULL() public {
+    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL_CULL() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
             assertTrue(spell.done());
         }
-        assertTrue(oracle.good("RWA008AT3-A"));
+        assertTrue(oracle.good("RWA009AT1-A"));
 
         tellSpell = new TellSpell();
         vote(address(tellSpell));
@@ -328,9 +362,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         tellSpell.cast();
-        assertTrue(oracle.good("RWA008AT3-A"));
+        // not good as we have TAU 0
+        assertTrue(!oracle.good("RWA009AT1-A"));
         hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA008AT3-A"));
+        assertTrue(!oracle.good("RWA009AT1-A"));
 
         cullSpell = new CullSpell();
         vote(address(cullSpell));
@@ -339,12 +374,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         cullSpell.cast();
-        assertTrue(!oracle.good("RWA008AT3-A"));
-        (, address pip, , ) = oracle.ilks("RWA008AT3-A");
+        assertTrue(!oracle.good("RWA009AT1-A"));
+        (, address pip, , ) = oracle.ilks("RWA009AT1-A");
         assertEq(DSValueAbstract(pip).read(), bytes32(0));
     }
 
-    function testSpellIsCast_RWA008AT3_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
+    function testSpellIsCast_RWA009AT1_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -353,99 +388,71 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         hevm.warp(now + 10 days); // Let rate be > 1
 
-        uint256 totalSupplyBeforeCheat = rwagem.totalSupply();
-        // set the balance of this contract
-        hevm.store(address(rwagem), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(2 * WAD)));
-        // increase the total supply
-        hevm.store(address(rwagem), bytes32(uint256(2)), bytes32(uint256(rwagem.totalSupply() + 2 * WAD)));
         // setting address(this) as operator
         hevm.store(address(rwaurn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
 
         (uint256 preInk, uint256 preArt) = vat.urns(ilk, address(rwaurn));
 
-        assertEq(rwagem.totalSupply(), totalSupplyBeforeCheat + 2 * WAD);
-        assertEq(rwagem.balanceOf(address(this)), 2 * WAD);
+        // Check if spell lock 1 * WAD of RWA009
+        assertEq(rwagem.balanceOf(address(rwajoin)), 1 * WAD);
+
+        // address(this) is operator
         assertEq(rwaurn.can(address(this)), 1);
 
-        rwagem.approve(address(rwaurn), 1 * WAD);
-        rwaurn.lock(1 * WAD);
+        // conduit is empty as we don't draw anything yet
         assertEq(dai.balanceOf(address(rwaconduitout)), 0);
-        rwaurn.draw(1 * WAD);
 
-        (, uint256 rate, , , ) = vat.ilks("RWA008AT3-A");
+        // draw DAI
+        uint256 drawAmount = 1 * WAD;
+        rwaurn.draw(drawAmount);
 
+        (, uint256 rate, , , ) = vat.ilks("RWA009AT1-A");
         uint256 dustInVat = vat.dai(address(rwaurn));
 
         (uint256 ink, uint256 art) = vat.urns(ilk, address(rwaurn));
-        assertEq(ink, 1 * WAD + preInk);
         uint256 currArt = ((1 * RAD + dustInVat) / rate) + preArt;
         assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
+
+        // conduit has DAI after Draw
         assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
 
+        // Add authroziation for address(this) to conduit
         // wards
         hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
         // can
         hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(2))), bytes32(uint256(1)));
         // may
-        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1)));
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
 
-        assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
-
+        // pick address and push dai to that address
         rwaconduitout.pick(address(this));
-
         rwaconduitout.push();
 
+        // check if get DAI from conduit
         assertEq(dai.balanceOf(address(rwaconduitout)), 0);
-        assertEq(dai.balanceOf(address(this)), 1 * WAD);
+        assertEq(dai.balanceOf(address(this)), 1 * WAD, "conduit.push: adress(this) don't have DAI");
 
         hevm.warp(now + 10 days);
 
+        // Check if we have outstanding dept in VAT
         (ink, art) = vat.urns(ilk, address(rwaurn));
-        assertEq(ink, 1 * WAD + preInk);
-        currArt = ((1 * RAD + dustInVat) / rate) + preArt;
-        assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
+        assertEq(art, 1 * WAD + preArt, "After DRAW: Art !== drawAmount + preArt");
 
-        (ink, ) = vat.urns(ilk, address(this));
-        assertEq(ink, 0);
+        // as we have SF 0 we need to pay exectly the same amount of DAI is we drawn
+        uint256 daiToPay = drawAmount;
 
-        jug.drip("RWA008AT3-A");
+        // transfer DAI to the URN
+        dai.transfer(address(rwaurn), daiToPay);
+        assertEq(dai.balanceOf(address(rwaurn)), daiToPay, "Balance of the URN doesnt match");
 
-        (, rate, , , ) = vat.ilks("RWA008AT3-A");
-
-        uint256 daiToPay = (art * rate - dustInVat) / RAY + 1; // extra wei rounding
-        uint256 vatDai = daiToPay * RAY;
-
-        uint256 currentDaiSupply = dai.totalSupply();
-
-        hevm.store(
-            address(vat),
-            keccak256(abi.encode(address(addr.addr("MCD_JOIN_DAI")), uint256(5))),
-            bytes32(vatDai)
-        ); // Forcing extra dai balance for MCD_JOIN_DAI on the Vat
-        hevm.store(address(dai), bytes32(uint256(1)), bytes32(currentDaiSupply + (daiToPay - art))); // Forcing extra DAI total supply to accomodate the accumulated fee
-        hevm.store(address(dai), keccak256(abi.encode(address(this), uint256(2))), bytes32(daiToPay)); // Forcing extra DAI balance to pay accumulated fee
-        // wards
-        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
-        // may
-        hevm.store(address(rwaconduitin), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
-
-        assertEq(dai.balanceOf(address(rwaconduitin)), 0);
-        dai.transfer(address(rwaconduitin), daiToPay);
-        assertEq(dai.balanceOf(address(rwaconduitin)), daiToPay);
-        rwaconduitin.push();
-
-        assertEq(dai.balanceOf(address(rwaurn)), daiToPay);
-        assertEq(dai.balanceOf(address(rwaconduitin)), 0);
-
-        assertEq(vat.dai(address(addr.addr("MCD_JOIN_DAI"))), vatDai);
-
+        // repay dept and free our collateral
         rwaurn.wipe(daiToPay);
         rwaurn.free(1 * WAD);
+
+        // check if we have 0 collateral and outstanding deplt in the VAT
         (ink, art) = vat.urns(ilk, address(rwaurn));
-        assertEq(ink, preInk);
-        assertTrue(art < 4); // wad -> rad conversion in wipe leaves some dust
-        (ink, ) = vat.urns(ilk, address(this));
-        assertEq(ink, 0);
+        assertEq(ink, 0, "INK != preINK");
+        assertEq(art, preArt, "ART != preART");
     }
 
     function testFailWrongDay() public {
@@ -510,35 +517,35 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 monday_2100_UTC = 1606770000; // Nov 30, 2020
 
         // Day tests
-        hevm.warp(monday_1400_UTC);                                    // Monday,   14:00 UTC
-        assertEq(spell.nextCastTime(), monday_1400_UTC);               // Monday,   14:00 UTC
+        hevm.warp(monday_1400_UTC); // Monday,   14:00 UTC
+        assertEq(spell.nextCastTime(), monday_1400_UTC); // Monday,   14:00 UTC
 
         if (spell.officeHours()) {
-            hevm.warp(monday_1400_UTC - 1 days);                       // Sunday,   14:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
+            hevm.warp(monday_1400_UTC - 1 days); // Sunday,   14:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC); // Monday,   14:00 UTC
 
-            hevm.warp(monday_1400_UTC - 2 days);                       // Saturday, 14:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
+            hevm.warp(monday_1400_UTC - 2 days); // Saturday, 14:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC); // Monday,   14:00 UTC
 
-            hevm.warp(monday_1400_UTC - 3 days);                       // Friday,   14:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC - 3 days);  // Able to cast
+            hevm.warp(monday_1400_UTC - 3 days); // Friday,   14:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC - 3 days); // Able to cast
 
-            hevm.warp(monday_2100_UTC);                                // Monday,   21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC + 1 days);  // Tuesday,  14:00 UTC
+            hevm.warp(monday_2100_UTC); // Monday,   21:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC + 1 days); // Tuesday,  14:00 UTC
 
-            hevm.warp(monday_2100_UTC - 1 days);                       // Sunday,   21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
+            hevm.warp(monday_2100_UTC - 1 days); // Sunday,   21:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC); // Monday,   14:00 UTC
 
-            hevm.warp(monday_2100_UTC - 2 days);                       // Saturday, 21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
+            hevm.warp(monday_2100_UTC - 2 days); // Saturday, 21:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC); // Monday,   14:00 UTC
 
-            hevm.warp(monday_2100_UTC - 3 days);                       // Friday,   21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
+            hevm.warp(monday_2100_UTC - 3 days); // Friday,   21:00 UTC
+            assertEq(spell.nextCastTime(), monday_1400_UTC); // Monday,   14:00 UTC
 
             // Time tests
             uint256 castTime;
 
-            for(uint256 i = 0; i < 5; i++) {
+            for (uint256 i = 0; i < 5; i++) {
                 castTime = monday_1400_UTC + i * 1 days; // Next day at 14:00 UTC
                 hevm.warp(castTime - 1 seconds); // 13:59:59 UTC
                 assertEq(spell.nextCastTime(), castTime);
@@ -567,7 +574,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_OSMs() private { // make public to use
+    function test_OSMs() private {
+        // make public to use
         address READER_ADDR = address(0);
 
         // Track OSM authorizations here
@@ -580,22 +588,25 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 1);
     }
 
-    function test_Medianizers() private { // make public to use
+    function test_Medianizers() private {
+        // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Track Median authorizations here
-        address SET_TOKEN    = address(0);
+        address SET_TOKEN = address(0);
         address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function test_auth() private { // make public to use
+    function test_auth() private {
+        // make public to use
         checkAuth(false);
     }
 
-    function test_auth_in_sources() private { // make public to use
+    function test_auth_in_sources() private {
+        // make public to use
         checkAuth(true);
     }
 
@@ -614,12 +625,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // Vacuous until the deployed_spell value is non-zero.
     function test_bytecode_matches() public {
         address expectedAction = (new DssSpell()).action();
-        address actualAction   = spell.action();
+        address actualAction = spell.action();
         uint256 expectedBytecodeSize;
         uint256 actualBytecodeSize;
         assembly {
             expectedBytecodeSize := extcodesize(expectedAction)
-            actualBytecodeSize   := extcodesize(actualAction)
+            actualBytecodeSize := extcodesize(actualAction)
         }
 
         uint256 metadataLength = getBytecodeMetadataLength(expectedAction);
@@ -700,12 +711,12 @@ contract EndSpell is TestSpell {
 
 contract CullSpellAction {
     ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA008AT3-A";
+    bytes32 constant ilk = "RWA009AT1-A";
 
     function execute() public {
         RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cull(
             ilk,
-            CHANGELOG.getAddress("RWA008AT3_A_URN")
+            CHANGELOG.getAddress("RWA009AT1_A_URN")
         );
     }
 }
@@ -719,7 +730,7 @@ contract CullSpell is TestSpell {
 
 contract CureSpellAction {
     ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA008AT3-A";
+    bytes32 constant ilk = "RWA009AT1-A";
 
     function execute() public {
         RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cure(ilk);
@@ -735,7 +746,7 @@ contract CureSpell is TestSpell {
 
 contract TellSpellAction {
     ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA008AT3-A";
+    bytes32 constant ilk = "RWA009AT1-A";
 
     function execute() public {
         VatAbstract(CHANGELOG.getAddress("MCD_VAT")).file(ilk, "line", 0);
@@ -752,7 +763,7 @@ contract TellSpell is TestSpell {
 
 contract BumpSpellAction {
     ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA008AT3-A";
+    bytes32 constant ilk = "RWA009AT1-A";
     uint256 constant WAD = 10**18;
     uint256 constant MILLION = 10**6;
 
