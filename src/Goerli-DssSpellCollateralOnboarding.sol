@@ -137,13 +137,9 @@ contract DssSpellCollateralOnboardingAction {
     address constant RWA009AT1_A_OUTPUT_CONDUIT = 0x634503e447569262F0F0548757FFf7a88a332242;
     address constant RWA009AT1_A_OPERATOR = 0x157B8a1F84DC0a21E1C7292f5C95bd046550e5eB;
     address constant RWA009AT1_A_MATE = 0x969880695d8aDFB8e9C38982e07905CC42eD3fAd;
-    address constant RWA009_A_TESTING_MATE = 0x9D36acB332426A70Eb6C2d0B970BE480C2DCA45D;
-
-    address constant RWA009_A_HVB_OPERATOR = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
-    address constant RWA009_A_HVB_MATE = 0x73E7FacDD8E4b378bBC87277Fa7dA84C9a16A82d;
 
     uint256 constant RWA009_A_INITIAL_DC = 100000000 * RAD;
-    uint256 constant RWA009_A_INITIAL_PRICE = 52 * MILLION * WAD; // TODO RWA team should provide
+    uint256 constant RWA009_A_INITIAL_PRICE = 100 * MILLION * WAD; // TODO RWA team should provide
     uint48 constant RWA009_A_TAU = 0;
 
     uint256 constant REG_CLASS_RWA = 3;
@@ -222,18 +218,12 @@ contract DssSpellCollateralOnboardingAction {
 
         // set up the urn
         RwaUrnLike(RWA009AT1_A_URN).hope(RWA009AT1_A_OPERATOR);
-        RwaUrnLike(RWA009AT1_A_URN).hope(RWA009_A_HVB_OPERATOR);
 
         // set up output conduit
         RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).hope(RWA009AT1_A_OPERATOR);
-        RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).hope(RWA009_A_HVB_OPERATOR);
 
         // whitelist in the conduits
         RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).mate(RWA009AT1_A_MATE);
-
-        RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).mate(RWA009_A_TESTING_MATE);
-
-        RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).mate(RWA009_A_HVB_MATE);
 
         // lock RWA009 Token in the URN
         ERC20Like(RWA009AT1).approve(RWA009AT1_A_URN, 1 * WAD);
@@ -257,7 +247,7 @@ contract DssSpellCollateralOnboardingAction {
             REG_CLASS_RWA,
             pip,
             address(0),
-            TokenDetailsLike(RWA009AT1).name(),
+            "RWA009AT1-A: H. V. Bank",
             TokenDetailsLike(RWA009AT1).symbol()
         );
     }

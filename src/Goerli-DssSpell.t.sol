@@ -218,7 +218,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(chainLog.getAddress("RWA009AT1_A_URN"), addr.addr("RWA009AT1_A_URN"));
         assertEq(chainLog.getAddress("RWA009AT1_A_OUTPUT_CONDUIT"), addr.addr("RWA009AT1_A_OUTPUT_CONDUIT"));
 
-        assertEq(chainLog.version(), "0.3.0");
+        assertEq(chainLog.version(), "0.3.5");
     }
 
     function testNewIlkRegistryValues() public {
@@ -236,21 +236,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(reg.pip("RWA009AT1-A"),    addr.addr("PIP_RWA009AT1"));
         // We don't have auctions for this collateral
         // assertEq(reg.xlip("RWA009AT1-A"),   addr.addr("MCD_CLIP_RWA009AT1_A"));
-        assertEq(reg.name("RWA009AT1-A"), "RWA-009AT1");
+        assertEq(reg.name("RWA009AT1-A"), "RWA009AT1-A: H. V. Bank");
         assertEq(reg.symbol("RWA009AT1-A"), "RWA009AT1");
     }
 
     function testNewPermissions() private {
-        address MCD_JOIN_RWA009_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
+        address MCD_JOIN_RWA009AT1_A = 0x95191eB3Ab5bEB48a3C0b1cd0E6d918931448a1E;
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA009_A), 1);
+        assertEq(WardsLike(addr.addr("MCD_VAT")).wards(MCD_JOIN_RWA009AT1_A), 1);
     }
 
-    function testSpellIsCast_RWA009_INTEGRATION_BUMP() public {
+    function testSpellIsCast_RWA009AT1_INTEGRATION_BUMP() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -266,12 +266,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.warp(castTime);
         (, address pip, , ) = oracle.ilks("RWA009AT1-A");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(52 * MILLION * WAD));
+        assertEq(DSValueAbstract(pip).read(), bytes32(100 * MILLION * WAD));
         bumpSpell.cast();
-        assertEq(DSValueAbstract(pip).read(), bytes32(60 * MILLION * WAD));
+        assertEq(DSValueAbstract(pip).read(), bytes32(110 * MILLION * WAD));
     }
 
-    function testSpellIsCast_RWA009_INTEGRATION_TELL() public {
+    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -295,55 +295,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(!oracle.good("RWA009AT1-A"));
         hevm.warp(block.timestamp + 2 weeks);
         assertTrue(!oracle.good("RWA009AT1-A"));
-    }
-
-    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL_CURE_GOOD() public {
-        if (!spell.done()) {
-            vote(address(spell));
-            scheduleWaitAndCast(address(spell));
-            assertTrue(spell.done());
-        }
-
-        tellSpell = new TellSpell();
-        vote(address(tellSpell));
-
-        tellSpell.schedule();
-
-        uint256 castTime = block.timestamp + pause.delay();
-        hevm.warp(castTime);
-        tellSpell.cast();
-        assertTrue(!oracle.good(ilk));
-        hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good(ilk));
-
-        cureSpell = new CureSpell();
-        vote(address(cureSpell));
-
-        cureSpell.schedule();
-        castTime = block.timestamp + pause.delay();
-        hevm.warp(castTime);
-        cureSpell.cast();
-        assertTrue(oracle.good(ilk));
-        (, , , uint48 toc) = oracle.ilks(ilk);
-        assertEq(uint256(toc), 0);
-    }
-
-    function testFailSpellIsCast_RWA009AT1_INTEGRATION_CURE() public {
-        if (!spell.done()) {
-            vote(address(spell));
-            scheduleWaitAndCast(address(spell));
-            assertTrue(spell.done());
-        }
-
-        cureSpell = new CureSpell();
-        vote(address(cureSpell));
-
-        cureSpell.schedule();
-        uint256 castTime = block.timestamp + pause.delay();
-        hevm.warp(castTime);
-        cureSpell.cast();
-        (, , , uint48 toc) = oracle.ilks(ilk);
-        assertEq(uint256(toc), 0);
     }
 
     function testSpellIsCast_RWA009AT1_INTEGRATION_TELL_CULL() public {
@@ -768,7 +719,7 @@ contract BumpSpellAction {
     uint256 constant MILLION = 10**6;
 
     function execute() public {
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 60 * MILLION * WAD);
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 110 * MILLION * WAD);
     }
 }
 
