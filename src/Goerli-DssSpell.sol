@@ -23,17 +23,15 @@ import "dss-exec-lib/DssAction.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
 import "dss-interfaces/dss/VatAbstract.sol";
 
-import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
+import {DssSpellCollateralOnboardingAction} from "./Goerli-DssSpellCollateralOnboarding.sol";
 
 interface RelyLike {
     function rely(address) external;
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
-    address public constant RWA_URN_PROXY_VIEW = 0x590128AecF8D61B5Bc5965b768CC999Eb8531aFA;
-
     // Provides a descriptive tag for bot consumption
-    string public constant override description = "Set RwaTokenFactory to CHANGELOG";
+    string public constant override description = "HVB onboarding CES Goerli Spell";
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
@@ -41,12 +39,12 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
-        address CHAINLOG = DssExecLib.LOG;
-        ChainlogAbstract(CHAINLOG).setAddress("RWA_TOKEN_FAB", 0xE00724a26Dd7a6F24333926bc70c80abb4b43edC);
-        DssExecLib.setChangelogVersion("0.3.2");
+        ChainlogAbstract CHAINLOG = ChainlogAbstract(DssExecLib.LOG);
+        onboardNewCollaterals();
+        DssExecLib.setChangelogVersion("0.3.5");
     }
 }
 
 contract DssSpell is DssExec {
-    constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) public {}
+    constructor() public DssExec(block.timestamp + 30 days, address(new DssSpellAction())) {}
 }
