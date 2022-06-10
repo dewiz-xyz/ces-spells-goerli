@@ -117,30 +117,33 @@ contract DssSpellCollateralOnboardingAction {
 
     // --- Math ---
     uint256 public constant THOUSAND = 10**3;
-    uint256 public constant MILLION = 10**6;
-    uint256 public constant WAD = 10**18;
-    uint256 public constant RAY = 10**27;
-    uint256 public constant RAD = 10**45;
+    uint256 public constant MILLION  = 10**6;
+    uint256 public constant WAD      = 10**18;
+    uint256 public constant RAY      = 10**27;
+    uint256 public constant RAD      = 10**45;
 
     // GOERLI ADDRESSES
 
     // The contracts in this list should correspond to MCD core contracts, verify
     // against the current release list at:
     //     https://github.com/clio-finance/ces-goerli/blob/master/contracts.json
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
+    ChainlogAbstract constant CHANGELOG   = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
     IlkRegistryAbstract constant REGISTRY = IlkRegistryAbstract(0x8E8049Eb87673aC30D8d17CdDF4f0a08b5e7Cc0d);
 
-    address constant MIP21_LIQUIDATION_ORACLE = 0x493A7F7E6f44D3bd476bc1bfBBe191164269C0Cc;
-    address constant RWA009AT1 = 0x03171EF79F35bb68624C0572159eC582fc24eB10;
-    address constant MCD_JOIN_RWA009AT1_A = 0xd3E94F87b0b5d358666713Faf5b4Ba5112Feb13a;
-    address constant RWA009AT1_A_URN = 0xC67421A9a4c3e1cab2b38210FF1744F8fE27f290;
-    address constant RWA009AT1_A_OUTPUT_CONDUIT = 0x634503e447569262F0F0548757FFf7a88a332242;
-    address constant RWA009AT1_A_OPERATOR = 0x157B8a1F84DC0a21E1C7292f5C95bd046550e5eB;
-    address constant RWA009AT1_A_MATE = 0x969880695d8aDFB8e9C38982e07905CC42eD3fAd;
+    // MIP21 components
+    address constant RWA009AT3                  = 0xE98e51F73ee2F2D138A6FA4A846f02e2001ca578;
+    address constant MCD_JOIN_RWA009AT3_A       = 0x94115a10269900c7B5D034832784feA538FF8Ad1;
+    address constant RWA009AT3_A_URN            = 0xc24fc3d7E9DCdeF7475F1A8eA1dA6fB9CA7080fe;
+    address constant RWA009AT3_A_JAR            = 0x35aDdD8cfE582180CD0065D74c19c5B632C6161c;
+    address constant RWA009AT3_A_OUTPUT_CONDUIT = 0xF37E330F2bBf3fa6A31a998c3aBE0c6c63c6834C;
+    address constant RWA009AT3_A_OPERATOR       = 0x3E774D9dfA578cc82C5b94a329230cD5736e9106;
+    address constant RWA009AT3_A_MATE           = 0x969880695d8aDFB8e9C38982e07905CC42eD3fAd;
 
-    uint256 constant RWA009_A_INITIAL_DC = 100000000 * RAD;
-    uint256 constant RWA009_A_INITIAL_PRICE = 100 * MILLION * WAD; // TODO RWA team should provide
-    uint48 constant RWA009_A_TAU = 0;
+    // MIP21_LIQUIDATION_ORACLE params
+    address constant MIP21_LIQUIDATION_ORACLE = 0x493A7F7E6f44D3bd476bc1bfBBe191164269C0Cc;
+    uint256 constant RWA009_A_INITIAL_DC      = 100000000 * RAD;
+    uint256 constant RWA009_A_INITIAL_PRICE   = 100 * MILLION * WAD; // TODO RWA team should provide
+    uint48  constant RWA009_A_TAU             = 0;
 
     uint256 constant REG_CLASS_RWA = 3;
 
@@ -157,21 +160,21 @@ contract DssSpellCollateralOnboardingAction {
 
     function onboardNewCollaterals() internal {
         // --------------------------- RWA Collateral onboarding ---------------------------
-        address MCD_VAT = ChainlogAbstract(CHANGELOG).getAddress("MCD_VAT");
-        address MCD_JUG = ChainlogAbstract(CHANGELOG).getAddress("MCD_JUG");
+        address MCD_VAT  = ChainlogAbstract(CHANGELOG).getAddress("MCD_VAT");
+        address MCD_JUG  = ChainlogAbstract(CHANGELOG).getAddress("MCD_JUG");
         address MCD_SPOT = ChainlogAbstract(CHANGELOG).getAddress("MCD_SPOT");
 
         // RWA009-A collateral deploy
 
         // Set ilk bytes32 variable
-        bytes32 ilk = "RWA009AT1-A";
+        bytes32 ilk = "RWA009AT3-A";
 
         // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA009AT1_A).vat() == MCD_VAT, "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA009AT1_A).ilk() == ilk, "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA009AT1_A).gem() == RWA009AT1, "join-gem-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009AT3_A).vat() == MCD_VAT,   "join-vat-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009AT3_A).ilk() == ilk,       "join-ilk-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009AT3_A).gem() == RWA009AT3, "join-gem-not-match");
         require(
-            GemJoinAbstract(MCD_JOIN_RWA009AT1_A).dec() == DSTokenAbstract(RWA009AT1).decimals(),
+            GemJoinAbstract(MCD_JOIN_RWA009AT3_A).dec() == DSTokenAbstract(RWA009AT3).decimals(),
             "join-dec-not-match"
         );
 
@@ -192,7 +195,7 @@ contract DssSpellCollateralOnboardingAction {
         JugAbstract(MCD_JUG).init(ilk);
 
         // Allow RWA009 Join to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA009AT1_A);
+        VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA009AT3_A);
 
         // Allow RwaLiquidationOracle2 to modify Vat registry
         VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
@@ -214,41 +217,42 @@ contract DssSpellCollateralOnboardingAction {
         SpotAbstract(MCD_SPOT).poke(ilk);
 
         // give the urn permissions on the join adapter
-        GemJoinAbstract(MCD_JOIN_RWA009AT1_A).rely(RWA009AT1_A_URN);
+        GemJoinAbstract(MCD_JOIN_RWA009AT3_A).rely(RWA009AT3_A_URN);
 
         // set up the urn
-        RwaUrnLike(RWA009AT1_A_URN).hope(RWA009AT1_A_OPERATOR);
+        RwaUrnLike(RWA009AT3_A_URN).hope(RWA009AT3_A_OPERATOR);
 
         // set up output conduit
-        RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).hope(RWA009AT1_A_OPERATOR);
+        RwaOutputConduitLike(RWA009AT3_A_OUTPUT_CONDUIT).hope(RWA009AT3_A_OPERATOR);
 
         // whitelist in the conduits
-        RwaOutputConduitLike(RWA009AT1_A_OUTPUT_CONDUIT).mate(RWA009AT1_A_MATE);
+        RwaOutputConduitLike(RWA009AT3_A_OUTPUT_CONDUIT).mate(RWA009AT3_A_MATE);
 
         // lock RWA009 Token in the URN
-        ERC20Like(RWA009AT1).approve(RWA009AT1_A_URN, 1 * WAD);
-        RwaUrnLike(RWA009AT1_A_URN).hope(address(this));
-        RwaUrnLike(RWA009AT1_A_URN).lock(1 * WAD);
-        RwaUrnLike(RWA009AT1_A_URN).nope(address(this));
+        ERC20Like(RWA009AT3).approve(RWA009AT3_A_URN, 1 * WAD);
+        RwaUrnLike(RWA009AT3_A_URN).hope(address(this));
+        RwaUrnLike(RWA009AT3_A_URN).lock(1 * WAD);
+        RwaUrnLike(RWA009AT3_A_URN).nope(address(this));
 
         // ChainLog Updates
         // CHANGELOG.setAddress("MIP21_LIQUIDATION_ORACLE", MIP21_LIQUIDATION_ORACLE);
         // Add RWA009 contract to the changelog
-        CHANGELOG.setAddress("RWA009AT1", RWA009AT1);
-        CHANGELOG.setAddress("MCD_JOIN_RWA009AT1_A", MCD_JOIN_RWA009AT1_A);
-        CHANGELOG.setAddress("RWA009AT1_A_URN", RWA009AT1_A_URN);
-        CHANGELOG.setAddress("RWA009AT1_A_OUTPUT_CONDUIT", RWA009AT1_A_OUTPUT_CONDUIT);
+        CHANGELOG.setAddress("RWA009AT3",                  RWA009AT3);
+        CHANGELOG.setAddress("MCD_JOIN_RWA009AT3_A",       MCD_JOIN_RWA009AT3_A);
+        CHANGELOG.setAddress("RWA009AT3_A_URN",            RWA009AT3_A_URN);
+        CHANGELOG.setAddress("RWA009AT3_A_JAR",            RWA009AT3_A_JAR);
+        CHANGELOG.setAddress("RWA009AT3_A_OUTPUT_CONDUIT", RWA009AT3_A_OUTPUT_CONDUIT);
 
         REGISTRY.put(
-            "RWA009AT1-A",
-            MCD_JOIN_RWA009AT1_A,
-            RWA009AT1,
-            GemJoinAbstract(MCD_JOIN_RWA009AT1_A).dec(),
+            "RWA009AT3-A",
+            MCD_JOIN_RWA009AT3_A,
+            RWA009AT3,
+            GemJoinAbstract(MCD_JOIN_RWA009AT3_A).dec(),
             REG_CLASS_RWA,
             pip,
             address(0),
-            "RWA009AT1-A: H. V. Bank",
-            TokenDetailsLike(RWA009AT1).symbol()
+            "RWA009AT3-A: H. V. Bank",
+            TokenDetailsLike(RWA009AT3).symbol()
         );
     }
 }

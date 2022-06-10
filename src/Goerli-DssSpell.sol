@@ -41,7 +41,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     function actions() public override {
         ChainlogAbstract CHAINLOG = ChainlogAbstract(DssExecLib.LOG);
         onboardNewCollaterals();
-        DssExecLib.setChangelogVersion("0.3.5");
+        DssExecLib.setChangelogVersion("0.3.6");
     }
 }
 
