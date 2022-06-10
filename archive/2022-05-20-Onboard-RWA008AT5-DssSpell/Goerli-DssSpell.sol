@@ -25,11 +25,11 @@ import "dss-interfaces/dss/VatAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
-interface RelyLike {
-    function rely(address) external;
+interface MateLike {
+    function mate(address) external;
 }
 
-contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
+contract DssSpellAction is DssAction/*, DssSpellCollateralOnboardingAction*/ {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -39,10 +39,16 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
-        ChainlogAbstract CHAINLOG = ChainlogAbstract(DssExecLib.LOG);
+        // ChainlogAbstract CHAINLOG = ChainlogAbstract(DssExecLib.LOG);
 
-        onboardNewCollaterals();
-        DssExecLib.setChangelogVersion("0.3.4");
+        // onboardNewCollaterals();
+        // DssExecLib.setChangelogVersion("0.3.4");
+        address RWA008AT4_A_INPUT_CONDUIT = 0x6f4719E6F2Df070a8B37F27b669106ee8dEE9606;
+        address RWA008AT4_A_OUTPUT_CONDUIT = 0xe165cc177dA93b70802aD7f4FCaCa675F4234316;
+        address DIIS_GROUP_WALLET = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
+
+        MateLike(RWA008AT4_A_INPUT_CONDUIT).mate(DIIS_GROUP_WALLET);
+        MateLike(RWA008AT4_A_OUTPUT_CONDUIT).mate(DIIS_GROUP_WALLET);
     }
 }
 
