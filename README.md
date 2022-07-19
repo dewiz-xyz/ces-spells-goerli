@@ -1,6 +1,6 @@
 # ces-spells-goerli
 
-![Build Status](https://github.com/makerdao/spells-goerli/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)
+![Build Status](https://github.com/clio-finance/ces-spells-goerli/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)
 
 Staging repo for MakerDAO's Collateral Engineering Services Goerli executive spells.
 
