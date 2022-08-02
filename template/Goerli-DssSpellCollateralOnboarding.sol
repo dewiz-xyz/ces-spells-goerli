@@ -19,7 +19,7 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
 
-contract DssSpellCollateralOnboardingAction {
+contract DssSpellCollateralAction {
 
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
@@ -84,5 +84,9 @@ contract DssSpellCollateralOnboardingAction {
         // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
         // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
         // ChainlogAbstract(CHAINLOG).setVersion("<new-version>");
+    }
+
+    function offboardCollaterals() internal {
+
     }
 }

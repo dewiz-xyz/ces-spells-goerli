@@ -16,14 +16,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-pragma experimental ABIEncoderV2;
+// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
+// pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
+import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
+contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -49,7 +50,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     //uint256 constant MILLION = 10**6;
 
     function actions() public override {
-
+        // onboardNewCollaterals();
     }
 }
 

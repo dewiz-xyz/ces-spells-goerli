@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: © 2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -16,20 +17,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-// Enable ABIEncoderV2 when onboarding collateral
-pragma experimental ABIEncoderV2;
+// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
+// pragma experimental ABIEncoderV2;
+
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dss/ChainlogAbstract.sol";
-import "dss-interfaces/dss/VatAbstract.sol";
 
-import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
+import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface RelyLike {
-    function rely(address) external;
-}
-
-contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
+contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -39,8 +35,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
-        ChainlogAbstract CHAINLOG = ChainlogAbstract(DssExecLib.LOG);
-
         onboardNewCollaterals();
         DssExecLib.setChangelogVersion("0.2.5");
     }
