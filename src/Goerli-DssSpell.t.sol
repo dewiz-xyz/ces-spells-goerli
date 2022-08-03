@@ -199,7 +199,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(chainLog.getAddress("RWA_TOKEN_FAB"), addr.addr("RWA_TOKEN_FAB"));
 
         // TODO Change this to the right version
-        assertEq(chainLog.version(), "0.3.8");
+        assertEq(chainLog.version(), "0.3.9");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
