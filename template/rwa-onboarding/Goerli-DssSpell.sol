@@ -39,11 +39,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         onboardNewCollaterals();
 
-        // lock RWA999 Token in the URN
-        GemLike(RWA999).approve(RWA999_A_URN, 1 * WAD);
-        RwaUrnLike(RWA999_A_URN).lock(1 * WAD);
-
-        DssExecLib.setChangelogVersion("0.2.5");
+        DssExecLib.setChangelogVersion("x.x.x");
     }
 }
 

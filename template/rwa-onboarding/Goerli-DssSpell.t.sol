@@ -515,30 +515,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaInputConduitLike  rwaconduitinjar_999   = RwaInputConduitLike(addr.addr("RWA999_A_INPUT_CONDUIT_JAR"));
     uint256 daiPsmGemDiffDecimals              = 10**sub(dai.decimals(), psmGem.decimals());
 
-    string OLDDOC = "";
-    string NEWDOC = "";
-
-    function testDocChange() private { // make public to use
-        bytes32 ilk = "RWA999-A";
-
-        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
-            oracle.ilks(ilk);
-
-        assertEq(docOld, OLDDOC, "bad old document");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
-            oracle.ilks(ilk);
-
-        assertEq(docNew, NEWDOC,     "bad new document");
-        assertEq(pipOld, pipNew,     "pip is the same");
-        assertTrue(tauOld == tauNew, "tau is the same");
-        assertTrue(tocOld == tocNew, "toc is the same");
-    }
-    
     function testRWA999_INTEGRATION_CONDUITS_SETUP() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -823,7 +799,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         hevm.warp(block.timestamp + end.wait());
 
-        // Removing the surplus to allow continuing the execution.
+        // Removing the surplus to allow continuing the execution.  
         hevm.store(
             address(vat),
             keccak256(abi.encode(address(vow), uint256(5))),
