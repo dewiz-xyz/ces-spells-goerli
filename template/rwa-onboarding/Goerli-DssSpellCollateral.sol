@@ -230,6 +230,13 @@ contract DssSpellCollateralAction {
         );
     }
 
+```suggestion
+    function collateralAction() internal {
+        onboardCollaterals();
+        //updateCollaterals();
+        //offboardCollaterals();
+    }
+    
     function onboardNewCollaterals() internal {
         IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
         address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
@@ -243,5 +250,79 @@ contract DssSpellCollateralAction {
 
         // Onboard *: https://vote.makerdao.com/polling/TODO
         onboardRwaXXX(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
+    }
+    
+    function updateCollaterals() internal {
+        // ------------------------------- Collateral updates -------------------------------
+
+        // Enable autoline for XXX-A
+        // Poll Link:
+        // Forum Link:
+        // DssExecLib.setIlkAutoLineParameters(
+        //    XXX-A,
+        //    AMOUNT,
+        //    GAP,
+        //    TTL
+        // );
+    }
+
+    function offboardCollaterals() internal {
+        // ----------------------------- Collateral offboarding -----------------------------
+        // 1st Stage of Collateral Offboarding Process
+        // Poll Link:
+        // uint256 line;
+        // uint256 lineReduction;
+
+        // Set XXX-A Maximum Debt Ceiling to 0
+        // (,,,line,) = vat.ilks("XXX-A");
+        // lineReduction += line;
+        // DssExecLib.removeIlkFromAutoLine("XXX-A");
+        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
+
+        // Set XXX-A Maximum Debt Ceiling to 0
+        // (,,,line,) = vat.ilks("XXX-A");
+        // lineReduction += line;
+        // DssExecLib.removeIlkFromAutoLine("XXX-A");
+        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
+
+        // Decrease Global Debt Ceiling by total amount of offboarded ilks
+        // vat.file("Line", _sub(vat.Line(), lineReduction));
+
+        // 2nd Stage of Collateral Offboarding Process
+        // address spotter = DssExecLib.spotter();
+
+        // Offboard XXX-A
+        // Poll Link:
+        // Forum Link:
+
+        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
+        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
+        // DssExecLib.linearInterpolation({
+        //     _name:      "XXX-A Offboarding",
+        //     _target:    spotter,
+        //     _ilk:       "XXX-A",
+        //     _what:      "mat",
+        //     _startTime: block.timestamp,
+        //     _start:     CURRENT_XXX_A_MAT,
+        //     _end:       TARGET_XXX_A_MAT,
+        //     _duration:  30 days
+        // });
+
+        // Offboard XXX-A
+        // Poll Link:
+        // Forum Link:
+
+        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
+        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
+        // DssExecLib.linearInterpolation({
+        //     _name:      "XXX-A Offboarding",
+        //     _target:    spotter,
+        //     _ilk:       "XXX-A",
+        //     _what:      "mat",
+        //     _startTime: block.timestamp,
+        //     _start:     CURRENT_XXX_A_MAT,
+        //     _end:       TARGET_XXX_A_MAT,
+        //     _duration:  30 days
+        // });
     }
 }
