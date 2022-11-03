@@ -17,47 +17,11 @@
 pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
-
-interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48 toc, uint48 tau);
-    function bump(bytes32 ilk, uint256 val) external;
-    function tell(bytes32) external;
-    function cure(bytes32) external;
-    function cull(bytes32, address) external;
-    function good(bytes32) external view returns (bool);
-}
-
-interface RwaUrnLike {
-    function can(address) external view returns (uint256);
-    function gemJoin() external view returns (GemAbstract);
-    function lock(uint256) external;
-    function draw(uint256) external;
-    function wipe(uint256) external;
-    function free(uint256) external;
-}
-
-interface RwaOutputConduitLike {
-    function can(address) external view returns (uint256);
-    function may(address) external view returns (uint256);
-    function gem() external view returns (GemAbstract);
-    function bud(address) external view returns (uint256);
-    function pick(address) external;
-    function push() external;
-    function push(uint256) external;
-    function quit() external;
-    function kiss(address) external;
-    function mate(address) external;
-    function hope(address) external;
-    function quitTo() external view returns (address);
-}
-
-interface RwaInputConduitLike {
-    function wards(address) external view returns (uint256);
-    function may(address) external view returns (uint256);
-    function quitTo() external view returns (address);
-    function mate(address) external;
-    function push() external;
-}
+import "dss-interfaces/dss/mip21/RwaLiquidationOracleAbstract.sol";
+import "dss-interfaces/dss/mip21/RwaUrnAbstract.sol";
+import "dss-interfaces/dss/mip21/RwaJarAbstract.sol";
+import "dss-interfaces/dss/mip21/RwaOutputConduitAbstract.sol";
+import "dss-interfaces/dss/mip21/RwaInputConduitAbstract.sol";
 
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
@@ -209,8 +173,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("RWAXXX");
         checkChainlogKey("MCD_JOIN_RWAXXX_A");
         checkChainlogKey("RWAXXX_A_URN");
-        checkChainlogKey("RWAXXX_A_INPUT_CONDUIT_URN");
-        checkChainlogKey("RWAXXX_A_INPUT_CONDUIT_JAR");
+        checkChainlogKey("RWAXXX_A_INPUT_CONDUIT");
+        // Uncomment if the requires uses a PSM to swap Dai into another token.
+        // checkChainlogKey("RWAXXX_A_INPUT_CONDUIT_JAR");
         checkChainlogKey("RWAXXX_A_OUTPUT_CONDUIT");
         checkChainlogKey("PIP_RWAXXX");
 
@@ -501,19 +466,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     // RWA tests
-    address RWAXXX_A_OPERATOR                  = addr.addr("RWAXXX_A_OPERATOR");
-    address RWAXXX_A_CUSTODY                   = addr.addr("RWAXXX_A_CUSTODY");
+    address RWAXXX_A_OPERATOR                      = addr.addr("RWAXXX_A_OPERATOR");
+    address RWAXXX_A_CUSTODY                       = addr.addr("RWAXXX_A_CUSTODY");
     
-    RwaLiquidationLike oracle                  = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+    RwaLiquidationOracleAbstract oracle            = RwaLiquidationOracleAbstract(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
-    GemAbstract          rwagem_XXX            = GemAbstract(addr.addr("RWAXXX"));
-    GemJoinAbstract      rwajoin_XXX           = GemJoinAbstract(addr.addr("MCD_JOIN_RWAXXX_A"));
-    RwaUrnLike           rwaurn_XXX            = RwaUrnLike(addr.addr("RWAXXX_A_URN"));
-    RwaOutputConduitLike rwaconduitout_XXX     = RwaOutputConduitLike(addr.addr("RWAXXX_A_OUTPUT_CONDUIT"));
-    GemAbstract          psmGem                = rwaconduitout_XXX.gem();
-    RwaInputConduitLike  rwaconduitinurn_XXX   = RwaInputConduitLike(addr.addr("RWAXXX_A_INPUT_CONDUIT_URN"));
-    RwaInputConduitLike  rwaconduitinjar_XXX   = RwaInputConduitLike(addr.addr("RWAXXX_A_INPUT_CONDUIT_JAR"));
-    uint256 daiPsmGemDiffDecimals              = 10**sub(dai.decimals(), psmGem.decimals());
+    GemAbstract          rwagem_XXX                = GemAbstract(addr.addr("RWAXXX"));
+    GemJoinAbstract      rwajoin_XXX               = GemJoinAbstract(addr.addr("MCD_JOIN_RWAXXX_A"));
+    RwaUrnAbstract           rwaurn_XXX            = RwaUrnAbstract(addr.addr("RWAXXX_A_URN"));
+    RwaOutputConduit3Abstract rwaconduitout_XXX    = RwaOutputConduit3Abstract(addr.addr("RWAXXX_A_OUTPUT_CONDUIT"));
+    GemAbstract          psmGem                    = rwaconduitout_XXX.gem();
+    RwaInputConduitAbstract  rwaconduitin_XXX      = RwaInputConduitAbstract(addr.addr("RWAXXX_A_INPUT_CONDUIT"));
+    // Uncomment if the deal requires a PSM to swap Dai into another token.
+    // RwaInputConduit3Abstract  rwaconduitinjar_XXX   = RwaInputConduit3Abstract(addr.addr("RWAXXX_A_INPUT_CONDUIT_JAR"));
+    uint256 daiPsmGemDiffDecimals                  = 10**sub(dai.decimals(), psmGem.decimals());
 
     function testRWAXXX_INTEGRATION_CONDUITS_SETUP() public {
         vote(address(spell));
@@ -528,13 +494,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         
         assertEq(rwaconduitout_XXX.bud(RWAXXX_A_CUSTODY), 1, "OutputConduit/coinbase-custody-not-whitelisted-for-pick");
 
-        assertEq(rwaconduitinurn_XXX.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
-        assertEq(rwaconduitinurn_XXX.may(RWAXXX_A_OPERATOR), 1, "InputConduitUrn/monetalis-not-mate");
-        assertEq(rwaconduitinurn_XXX.quitTo(), RWAXXX_A_CUSTODY, "InputConduitUrn/quit-to-not-set");
+        assertEq(rwaconduitin_XXX.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
+        assertEq(rwaconduitin_XXX.may(RWAXXX_A_OPERATOR), 1, "InputConduitUrn/monetalis-not-mate");
+        assertEq(rwaconduitin_XXX.quitTo(), RWAXXX_A_CUSTODY, "InputConduitUrn/quit-to-not-set");
 
-        assertEq(rwaconduitinjar_XXX.may(pauseProxy), 1, "InputConduitJar/pause-proxy-not-mate");
-        assertEq(rwaconduitinjar_XXX.may(RWAXXX_A_OPERATOR), 1, "InputConduitJar/monetalis-not-mate");
-        assertEq(rwaconduitinjar_XXX.quitTo(), RWAXXX_A_CUSTODY, "InputConduitJar/quit-to-not-set");
+        // Uncomment if the deal requires a PSM to swap Dai into another token.
+        // assertEq(rwaconduitinjar_XXX.may(pauseProxy), 1, "InputConduitJar/pause-proxy-not-mate");
+        // assertEq(rwaconduitinjar_XXX.may(RWAXXX_A_OPERATOR), 1, "InputConduitJar/monetalis-not-mate");
+        // assertEq(rwaconduitinjar_XXX.quitTo(), RWAXXX_A_CUSTODY, "InputConduitJar/quit-to-not-set");
 
         assertEq(rwajoin_XXX.wards(address(rwaurn_XXX)), 1, "Join/ward-urn-not-set");
 
@@ -685,24 +652,25 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         rwaconduitout_XXX.quit();
 
         assertEq(dai.balanceOf(address(rwaconduitout_XXX)), 0, "RWAXXX: Output conduit still holds Dai after quit()");
-        assertEq(psmGem.balanceOf(address(this)), pushAmount / daiPsmGemDiffDecimals, "RWAXXX: Psm GEM not sent to destination after push()");
+        // Uncomment if the deal requires a PSM to swap Dai into another token.
+        // assertEq(psmGem.balanceOf(address(this)), pushAmount / daiPsmGemDiffDecimals, "RWAXXX: Psm GEM not sent to destination after push()");
         assertEq(dai.balanceOf(address(rwaurn_XXX)), drawAmount - pushAmount, "RWAXXX: Dai not sent to destination after push()");
 
         // as we have SF 0 we need to pay exectly the same amount of DAI we have drawn
         uint256 daiToPay = drawAmount;
 
         // wards
-        giveAuth(address(rwaconduitinurn_XXX), address(this));
+        giveAuth(address(rwaconduitin_XXX), address(this));
         // may
-        rwaconduitinurn_XXX.mate(address(this));
-        assertEq(rwaconduitinurn_XXX.may(address(this)), 1);
+        rwaconduitin_XXX.mate(address(this));
+        assertEq(rwaconduitin_XXX.may(address(this)), 1);
 
         // transfer PSM GEM to input conduit
-        psmGem.transfer(address(rwaconduitinurn_XXX), pushAmount / daiPsmGemDiffDecimals);
-        assertEq(psmGem.balanceOf(address(rwaconduitinurn_XXX)), pushAmount / daiPsmGemDiffDecimals, "RWAXXX: Psm GEM not sent to input conduit");
+        psmGem.transfer(address(rwaconduitin_XXX), pushAmount / daiPsmGemDiffDecimals);
+        assertEq(psmGem.balanceOf(address(rwaconduitin_XXX)), pushAmount / daiPsmGemDiffDecimals, "RWAXXX: Psm GEM not sent to input conduit");
         
         // input conduit 'push()' to the urn
-        rwaconduitinurn_XXX.push();
+        rwaconduitin_XXX.push();
 
         assertEq(dai.balanceOf(address(rwaurn_XXX)), daiToPay, "Balance of the URN doesnt match");
 
@@ -782,7 +750,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         rwaconduitout_XXX.quit();
 
         assertEq(dai.balanceOf(address(rwaconduitout_XXX)), 0, "RWAXXX: Output conduit still holds Dai after quit()");
-        assertEq(psmGem.balanceOf(address(this)), pushAmount / daiPsmGemDiffDecimals, "RWAXXX: Psm GEM not sent to destination after push()");
+        // Uncomment if the deal requires a PSM to swap Dai into another token.
+        // assertEq(psmGem.balanceOf(address(this)), pushAmount / daiPsmGemDiffDecimals, "RWAXXX: Psm GEM not sent to destination after push()");
         assertEq(dai.balanceOf(address(rwaurn_XXX)), drawAmount - pushAmount, "RWAXXX: Dai not sent to destination after push()");
 
         // END

@@ -37,7 +37,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        onboardNewCollaterals();
+        collateralAction();
 
         DssExecLib.setChangelogVersion("x.x.x");
     }
